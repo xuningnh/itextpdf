@@ -121,9 +121,6 @@ public class PDFTest {
              */
             JFreeChart jFreeChart = CreateJfreeBarChart.iCreateBarChart();
             CreateJfreeBarChart.iSetBarChart(jFreeChart);
-            jFreeChart.getLegend().setItemFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 16));
-            //获取title
-            jFreeChart.getTitle().setFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 16));
 
             // 设置图标题的字体
             java.awt.Font font2 = new java.awt.Font(" 黑体", java.awt.Font.CENTER_BASELINE, 20);
@@ -132,20 +129,20 @@ public class PDFTest {
             jFreeChart.setTitle(title2);
             FileOutputStream fos_jpg2 = null;
             try {
-                fos_jpg2 = new FileOutputStream(FILE_URL + "柱状图.jpg");
-                ChartUtils.writeChartAsJPEG(fos_jpg2, 0.7f, jFreeChart, 800, 1000, null);
+                fos_jpg2 = new FileOutputStream(FILE_URL + "企业专利申请量.jpg");
+                ChartUtils.writeChartAsJPEG(fos_jpg2, 0.7f, jFreeChart, 800, 600, null);
                 fos_jpg2.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             document.newPage();
-            Paragraph barParagraph = new Paragraph("02、柱状图测试", fontChinese_content);
+            Paragraph barParagraph = new Paragraph("六、企业专利申请量top10", fontChinese_content);
             barParagraph.setAlignment(Paragraph.ALIGN_LEFT);
             document.add(barParagraph);
-            Image barImage = Image.getInstance(FILE_URL + "柱状图.jpg");
+            Image barImage = Image.getInstance(FILE_URL + "企业专利申请量.jpg");
             barImage.setAlignment(Image.ALIGN_CENTER);
-            barImage.scaleAbsolute(400, 300);
+            barImage.scaleAbsolute(800, 600);
             document.add(barImage);
 
 

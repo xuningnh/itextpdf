@@ -4,7 +4,6 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.labels.ItemLabelAnchor;
 import org.jfree.chart.labels.ItemLabelPosition;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
@@ -17,7 +16,6 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import java.awt.*;
-import java.text.DecimalFormat;
 
 public class CreateJfreeBarChart {
     // 设置柱状图上方的标题
@@ -46,7 +44,7 @@ public class CreateJfreeBarChart {
         //        iSetBarChart(chart);
 //        WriteChartAsImage.writeChartAsImage(chart, getSaveImgUrlAndName(), getWidth(), getHeight());
 //        return ChartFactory.createBarChart(getChartTitle(), getDomainAxisLabel(), getRangeAxisLabel(), getDataset(), PlotOrientation.VERTICAL, true, false, false);
-        return ChartFactory.createBarChart(getChartTitle(), getDomainAxisLabel(), getRangeAxisLabel(), getDataset(), PlotOrientation.HORIZONTAL, true, false, false);
+        return ChartFactory.createBarChart(getChartTitle(), null, null, getDataset(), PlotOrientation.HORIZONTAL, false, false, false);
     }
 
     /**
@@ -56,38 +54,42 @@ public class CreateJfreeBarChart {
      */
     public static CategoryPlot iSetBarChart(JFreeChart chart) {
         CategoryPlot categoryplot = chart.getCategoryPlot();// 图本身
-        ValueAxis rangeAxis = categoryplot.getRangeAxis();
-        CategoryAxis domainAxis = categoryplot.getDomainAxis();
+//        ValueAxis rangeAxis = categoryplot.getRangeAxis();
         // 设置Y轴的提示文字样式
-        rangeAxis.setLabelFont(new Font("微软雅黑", Font.PLAIN, 12));
+//        rangeAxis.setLabelFont(new Font("微软雅黑", Font.PLAIN, 12));
         // 设置Y轴刻度线的长度
-        rangeAxis.setTickMarkInsideLength(10f);
+//        rangeAxis.setTickMarkInsideLength(10f);
+//        rangeAxis.setTickMarkOutsideLength(10f);
 
-        // rangeAxis.setTickMarkOutsideLength(10f);
+        CategoryAxis domainAxis = categoryplot.getDomainAxis();
         // 设置X轴下的标签文字
-        domainAxis.setLabelFont(new Font("微软雅黑", Font.PLAIN, 12));
+        domainAxis.setLabelFont(new Font("微软雅黑", Font.PLAIN, 24));
         // 设置X轴上提示文字样式
-        domainAxis.setTickLabelFont(new Font("微软雅黑", Font.PLAIN, 12));
-        NumberAxis vn = (NumberAxis) categoryplot.getRangeAxis();
+        domainAxis.setTickLabelFont(new Font("微软雅黑", Font.PLAIN, 16));
 
         // 设置Y轴的数字为百分比样式显示
-        DecimalFormat df = new DecimalFormat("0.0%");
-        vn.setNumberFormatOverride(df);
+//        DecimalFormat df = new DecimalFormat("0.0%");
+        NumberAxis vn = (NumberAxis) categoryplot.getRangeAxis();
+        // 隐藏Y轴数字
+        vn.setVisible(false);
+//        vn.setNumberFormatOverride(df);
         // 使柱状图反过来显示
         // vn.setInverted(true);
         // vn.setVerticalTickLabels(true);
 
         // 自定义柱状图中柱子的样式
         BarRenderer barRenderer = (BarRenderer) categoryplot.getRenderer();
-        barRenderer.setSeriesPaint(0, Color.decode("#C0504D")); // 给series1 Bar
-        barRenderer.setSeriesPaint(1, Color.decode("#E46C0A")); // 给series2 Bar
-        barRenderer.setSeriesPaint(2, Color.decode("#4F81BD")); // 给series3 Bar
-        barRenderer.setSeriesPaint(3, Color.decode("#00B050")); // 给series4 Bar
-        barRenderer.setSeriesPaint(4, Color.decode("#7030A0")); // 给series5 Bar
-        barRenderer.setSeriesPaint(5, Color.decode("#00BF00")); // 给series6 Bar
-        barRenderer.setSeriesPaint(6, Color.decode("#00BF00")); // 给series6 Bar
-        barRenderer.setSeriesPaint(7, Color.decode("#00BF00")); // 给series6 Bar
-        barRenderer.setSeriesPaint(8, Color.decode("#00BF00")); // 给series6 Bar
+        // 给series Bar 指定配色
+        barRenderer.setSeriesPaint(0, Color.decode("#5b9bd5"));
+        barRenderer.setSeriesPaint(1, Color.decode("#5b9bd5"));
+        barRenderer.setSeriesPaint(2, Color.decode("#5b9bd5"));
+        barRenderer.setSeriesPaint(3, Color.decode("#5b9bd5"));
+        barRenderer.setSeriesPaint(4, Color.decode("#5b9bd5"));
+        barRenderer.setSeriesPaint(5, Color.decode("#5b9bd5"));
+        barRenderer.setSeriesPaint(6, Color.decode("#5b9bd5"));
+        barRenderer.setSeriesPaint(7, Color.decode("#5b9bd5"));
+        barRenderer.setSeriesPaint(8, Color.decode("#5b9bd5"));
+        barRenderer.setSeriesPaint(9, Color.decode("#5b9bd5"));
 
         // 设置柱状图的顶端显示数字
         barRenderer.setIncludeBaseInRange(true);
@@ -119,7 +121,7 @@ public class CreateJfreeBarChart {
         // 设置标题的字体样式
         chart.getTitle().setFont(new Font("微软雅黑", Font.PLAIN, 24));
         // 设置图表下方图例上的字体样式
-        chart.getLegend().setItemFont(new Font("微软雅黑", Font.PLAIN, 12));
+//        chart.getLegend().setItemFont(new Font("微软雅黑", Font.PLAIN, 12));
 
         categoryplot.setRenderer(barRenderer);
 
@@ -141,19 +143,21 @@ public class CreateJfreeBarChart {
         String series4 = "四川海搏液压机械有限公司";
         String series5 = "泸州睿大智能变速器有限公司";
         String series6 = "四川邦立重机有限公司";
-        String series7 = "四川邦立重机有限公司2";
-        String series8 = "四川邦立重机有限公司3";
-        String series9 = "四川邦立重机有限公司4";
-        String type1 = "";
-        result.addValue(88, series1, type1);
-        result.addValue(79, series2, type1);
-        result.addValue(54, series3, type1);
-        result.addValue(50, series4, type1);
-        result.addValue(44, series5, type1);
-        result.addValue(43, series6, type1);
-        result.addValue(42, series7, type1);
-        result.addValue(42, series8, type1);
-        result.addValue(40, series9, type1);
+        String series7 = "泸州成邦机械工程有限公司";
+        String series8 = "泸州长江液压密封件有限公司";
+        String series9 = "泸州长江机械有限公司";
+        String series10 = "泸州邦立减速机有限公司";
+        String type1 = "公司";
+        result.addValue(88, type1, series1);
+        result.addValue(79, type1, series2);
+        result.addValue(54, type1, series3);
+        result.addValue(50, type1, series4);
+        result.addValue(44, type1, series5);
+        result.addValue(43, type1, series6);
+        result.addValue(42, type1, series7);
+        result.addValue(42, type1, series8);
+        result.addValue(40, type1, series9);
+        result.addValue(38, type1, series10);
         return result;
 
     }
