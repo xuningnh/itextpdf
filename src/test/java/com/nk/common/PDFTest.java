@@ -9,6 +9,8 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.chart.labels.StandardPieToolTipGenerator;
@@ -53,9 +55,9 @@ public class PDFTest {
 //            img.scaleAbsolute(328, 370);
 //            document.add(img);
             //生成饼状统计图
-            pieDataSet(document, fontChinese_content);
+//            pieDataSet(document, fontChinese_content);
             //柱状图
-            barDataset(document, fontChinese_content);
+//            barDataset(document, fontChinese_content);
             //折线图
             lineDataset(document, fontChinese_content);
 
@@ -72,35 +74,62 @@ public class PDFTest {
      * @return
      */
     private static void lineDataset(Document document, Font fontChinese_content) {
-        DefaultCategoryDataset lineDataset = new DefaultCategoryDataset();
-        //添加第一季度数据
-        lineDataset.addValue(6000, "第一季度", "J2SE类");
-        lineDataset.addValue(3000, "第一季度", "J2ME类");
-        lineDataset.addValue(12000, "第一季度", "J2EE类");
-        //添加第二季度数据
-        lineDataset.addValue(8000, "第二季度", "J2SE类");
-        lineDataset.addValue(4000, "第二季度", "J2ME类");
-        lineDataset.addValue(6000, "第二季度", "J2EE类");
-        //添加第三季度数据
-        lineDataset.addValue(5000, "第三季度", "J2SE类");
-        lineDataset.addValue(4000, "第三季度", "J2ME类");
-        lineDataset.addValue(8000, "第三季度", "J2EE类");
-        //添加第四季度数据
-        lineDataset.addValue(8000, "第四季度", "J2SE类");
-        lineDataset.addValue(2000, "第四季度", "J2ME类");
-        lineDataset.addValue(9000, "第四季度", "J2EE类");
-        JFreeChart lineChart = ChartFactory.createLineChart("java图书销量",
-                "java图书",
-                "销量",
-                lineDataset,
+        DefaultCategoryDataset lineDataset1 = new DefaultCategoryDataset();
+        //申请量
+        lineDataset1.addValue(3000, "申请量", "2016");
+        lineDataset1.addValue(3980, "申请量", "2017");
+        lineDataset1.addValue(3025, "申请量", "2018");
+        lineDataset1.addValue(3500, "申请量", "2019");
+        lineDataset1.addValue(6100, "申请量", "2020");
+        lineDataset1.addValue(5900, "申请量", "2021");
+        //申请成功量
+        lineDataset1.addValue(2015, "申请成功量", "2016");
+        lineDataset1.addValue(3100, "申请成功量", "2017");
+        lineDataset1.addValue(2030, "申请成功量", "2018");
+        lineDataset1.addValue(2600, "申请成功量", "2019");
+        lineDataset1.addValue(4100, "申请成功量", "2020");
+        lineDataset1.addValue(4160, "申请成功量", "2021");
+
+        DefaultCategoryDataset lineDataset2 = new DefaultCategoryDataset();
+        //申请企业数
+        lineDataset2.addValue(12, "申请企业数", "2016");
+        lineDataset2.addValue(20, "申请企业数", "2017");
+        lineDataset2.addValue(13, "申请企业数", "2018");
+        lineDataset2.addValue(24, "申请企业数", "2019");
+        lineDataset2.addValue(26, "申请企业数", "2020");
+        lineDataset2.addValue(32, "申请企业数", "2021");
+
+        JFreeChart lineChart = ChartFactory.createLineChart("",
+                "",
+                "",
+                lineDataset1,
                 PlotOrientation.VERTICAL,
-                true,
-                true,
-                true
+                false,
+                false,
+                false
         );
-        lineChart.getLegend().setItemFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 16));
+        CategoryPlot plot = lineChart.getCategoryPlot();
+
+        NumberAxis numberAxis1 = new NumberAxis();
+        numberAxis1.setTickUnit(new NumberTickUnit(1000));
+        // 设置Y轴左侧刻度
+        plot.setRangeAxis(0, numberAxis1);
+
+        //设置数据源dataset2
+        plot.setDataset(1, lineDataset2);
+        if (lineDataset1.getColumnCount() > 0 && lineDataset2.getColumnCount() > 0)
+        {
+            NumberAxis numberAxis2 = new NumberAxis();
+            numberAxis2.setTickUnit(new NumberTickUnit(5));
+            // 设置Y轴右侧刻度
+            plot.setRangeAxis(1, numberAxis2);
+            // 设置数据源dataset2应用Y轴右侧刻度
+            plot.mapDatasetToRangeAxis(1, 1);
+        }
+//        lineChart.getLegend().setItemFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 16));
         //获取title
-        lineChart.getTitle().setFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 16));
+//        lineChart.getTitle().setFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 16));
+
 
         //获取绘图区对象
         CategoryPlot linePlot = lineChart.getCategoryPlot();
@@ -116,14 +145,13 @@ public class PDFTest {
         ValueAxis rangeAxis = linePlot.getRangeAxis();
         rangeAxis.setLabelFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 12));
 
-
         /*
          * 生成图片
          */
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(FILE_URL + "折线图.jpg");
-            ChartUtils.writeChartAsJPEG(fos, 0.7f, lineChart, 600, 300);
+            ChartUtils.writeChartAsJPEG(fos, 0.7f, lineChart, 800, 300);
 
 
             Paragraph lineParagraph = new Paragraph("03、折线图测试", fontChinese_content);
@@ -131,7 +159,7 @@ public class PDFTest {
             document.add(lineParagraph);
             Image image = Image.getInstance(FILE_URL + "折线图.jpg");
             image.setAlignment(Image.ALIGN_CENTER);
-            image.scaleAbsolute(600, 300);
+            image.scaleAbsolute(800, 300);
             document.add(image);
         } catch (Exception e) {
             e.printStackTrace();
