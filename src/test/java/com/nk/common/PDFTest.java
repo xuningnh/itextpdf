@@ -84,25 +84,26 @@ public class PDFTest {
         lineDataset1.addValue(6100, "申请量", "2020");
         lineDataset1.addValue(5900, "申请量", "2021");
 
-        DefaultCategoryDataset lineDataset3 = new DefaultCategoryDataset();
-        //申请成功量
-        lineDataset1.addValue(2015, "申请成功量", "2016");
-        lineDataset1.addValue(3100, "申请成功量", "2017");
-        lineDataset1.addValue(2030, "申请成功量", "2018");
-        lineDataset1.addValue(2600, "申请成功量", "2019");
-        lineDataset1.addValue(4100, "申请成功量", "2020");
-        lineDataset1.addValue(4160, "申请成功量", "2021");
-
         DefaultCategoryDataset lineDataset2 = new DefaultCategoryDataset();
-        //申请企业数
-        lineDataset2.addValue(12, "申请企业数", "2016");
-        lineDataset2.addValue(20, "申请企业数", "2017");
-        lineDataset2.addValue(13, "申请企业数", "2018");
-        lineDataset2.addValue(24, "申请企业数", "2019");
-        lineDataset2.addValue(26, "申请企业数", "2020");
-        lineDataset2.addValue(32, "申请企业数", "2021");
+        //申请成功量
+        lineDataset2.addValue(2015, "申请成功量", "2016");
+        lineDataset2.addValue(3100, "申请成功量", "2017");
+        lineDataset2.addValue(2030, "申请成功量", "2018");
+        lineDataset2.addValue(2600, "申请成功量", "2019");
+        lineDataset2.addValue(4100, "申请成功量", "2020");
+        lineDataset2.addValue(4160, "申请成功量", "2021");
 
-        JFreeChart lineChart = ChartFactory.createLineChart("",
+        DefaultCategoryDataset lineDataset3 = new DefaultCategoryDataset();
+        //申请企业数
+        lineDataset3.addValue(12, "申请企业数", "2016");
+        lineDataset3.addValue(20, "申请企业数", "2017");
+        lineDataset3.addValue(13, "申请企业数", "2018");
+        lineDataset3.addValue(24, "申请企业数", "2019");
+        lineDataset3.addValue(26, "申请企业数", "2020");
+        lineDataset3.addValue(32, "申请企业数", "2021");
+
+        JFreeChart lineChart = ChartFactory.createLineChart(
+                "",
                 "",
                 "",
                 lineDataset1,
@@ -114,28 +115,29 @@ public class PDFTest {
         CategoryPlot plot = lineChart.getCategoryPlot();
 
         NumberAxis numberAxis1 = new NumberAxis();
-        // 左侧刻度跨度为1000单位
+        // 左侧刻度跨度为 1000 单位
         numberAxis1.setTickUnit(new NumberTickUnit(1000));
         // 设置Y轴左侧刻度
         plot.setRangeAxis(0, numberAxis1);
 
-        //设置数据源dataset2
+        //设置数据源dataset3
         plot.setDataset(1, lineDataset2);
+        plot.setDataset(2, lineDataset3);
         plot.mapDatasetToRangeAxis(0, 0);
-//        if (lineDataset1.getColumnCount() > 0 && lineDataset2.getColumnCount() > 0) {
+//        if (lineDataset1.getColumnCount() > 0 && lineDataset3.getColumnCount() > 0) {
         NumberAxis numberAxis2 = new NumberAxis();
-        // 右侧刻度跨度为5单位
-        numberAxis2.setTickUnit(new NumberTickUnit(5));
+        // 右侧刻度跨度为 10 单位
+        numberAxis2.setTickUnit(new NumberTickUnit(10));
         // 设置Y轴右侧刻度
         plot.setRangeAxis(1, numberAxis2);
-        // 设置数据源dataset2应用Y轴右侧刻度
-        plot.mapDatasetToRangeAxis(1, 1);
+        // 设置数据源dataset3应用Y轴右侧刻度
+        plot.mapDatasetToRangeAxis(2, 1);
 //        }
         // 设置样式
         LineAndShapeRenderer lasp = (LineAndShapeRenderer) plot.getRenderer();
         // 设置拐点可见
         lasp.setDefaultShapesVisible(true);
-        // 设置折线拐点颜色
+        // fixme 设置折线与拐点颜色
         lasp.setSeriesPaint(0, new Color(2, 167, 240));
         lasp.setSeriesPaint(1, new Color(245, 154, 35));
         lasp.setSeriesPaint(2, new Color(127, 127, 127));
@@ -158,15 +160,10 @@ public class PDFTest {
         ValueAxis rangeAxis = linePlot.getRangeAxis();
         rangeAxis.setLabelFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 12));
 
-        /*
-         * 生成图片
-         */
-        FileOutputStream fos = null;
         try {
-            fos = new FileOutputStream(FILE_URL + "折线图.jpg");
+            // 生成图片
+            FileOutputStream fos = new FileOutputStream(FILE_URL + "折线图.jpg");
             ChartUtils.writeChartAsJPEG(fos, 1f, lineChart, 800, 300);
-
-
             Paragraph lineParagraph = new Paragraph("03、折线图测试", fontChinese_content);
             lineParagraph.setAlignment(Paragraph.ALIGN_LEFT);
             document.add(lineParagraph);
