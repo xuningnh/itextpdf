@@ -17,6 +17,7 @@ import org.jfree.chart.labels.StandardPieToolTipGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
@@ -82,6 +83,8 @@ public class PDFTest {
         lineDataset1.addValue(3500, "申请量", "2019");
         lineDataset1.addValue(6100, "申请量", "2020");
         lineDataset1.addValue(5900, "申请量", "2021");
+
+        DefaultCategoryDataset lineDataset3 = new DefaultCategoryDataset();
         //申请成功量
         lineDataset1.addValue(2015, "申请成功量", "2016");
         lineDataset1.addValue(3100, "申请成功量", "2017");
@@ -111,21 +114,31 @@ public class PDFTest {
         CategoryPlot plot = lineChart.getCategoryPlot();
 
         NumberAxis numberAxis1 = new NumberAxis();
+        // 左侧刻度跨度为1000单位
         numberAxis1.setTickUnit(new NumberTickUnit(1000));
         // 设置Y轴左侧刻度
         plot.setRangeAxis(0, numberAxis1);
 
         //设置数据源dataset2
         plot.setDataset(1, lineDataset2);
-        if (lineDataset1.getColumnCount() > 0 && lineDataset2.getColumnCount() > 0)
-        {
-            NumberAxis numberAxis2 = new NumberAxis();
-            numberAxis2.setTickUnit(new NumberTickUnit(5));
-            // 设置Y轴右侧刻度
-            plot.setRangeAxis(1, numberAxis2);
-            // 设置数据源dataset2应用Y轴右侧刻度
-            plot.mapDatasetToRangeAxis(1, 1);
-        }
+        plot.mapDatasetToRangeAxis(0, 0);
+//        if (lineDataset1.getColumnCount() > 0 && lineDataset2.getColumnCount() > 0) {
+        NumberAxis numberAxis2 = new NumberAxis();
+        // 右侧刻度跨度为5单位
+        numberAxis2.setTickUnit(new NumberTickUnit(5));
+        // 设置Y轴右侧刻度
+        plot.setRangeAxis(1, numberAxis2);
+        // 设置数据源dataset2应用Y轴右侧刻度
+        plot.mapDatasetToRangeAxis(1, 1);
+//        }
+        // 设置样式
+        LineAndShapeRenderer lasp = (LineAndShapeRenderer) plot.getRenderer();
+        // 设置拐点可见
+        lasp.setDefaultShapesVisible(true);
+        // 设置折线拐点颜色
+        lasp.setSeriesPaint(0, new Color(2, 167, 240));
+        lasp.setSeriesPaint(1, new Color(245, 154, 35));
+        lasp.setSeriesPaint(2, new Color(127, 127, 127));
 //        lineChart.getLegend().setItemFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 16));
         //获取title
 //        lineChart.getTitle().setFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 16));
@@ -151,7 +164,7 @@ public class PDFTest {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(FILE_URL + "折线图.jpg");
-            ChartUtils.writeChartAsJPEG(fos, 0.7f, lineChart, 800, 300);
+            ChartUtils.writeChartAsJPEG(fos, 1f, lineChart, 800, 300);
 
 
             Paragraph lineParagraph = new Paragraph("03、折线图测试", fontChinese_content);
@@ -214,7 +227,7 @@ public class PDFTest {
         FileOutputStream fos_jpg = null;
         try {
             fos_jpg = new FileOutputStream(FILE_URL + "饼状图.jpg");
-            ChartUtils.writeChartAsJPEG(fos_jpg, 0.7f, chart, 800, 1000, null);
+            ChartUtils.writeChartAsJPEG(fos_jpg, 1f, chart, 800, 1000, null);
             fos_jpg.close();
 
 
@@ -231,6 +244,12 @@ public class PDFTest {
         }
     }
 
+    /**
+     * 柱状图
+     *
+     * @param document
+     * @param fontChinese_content
+     */
     private static void barDataset(Document document, Font fontChinese_content) {
         JFreeChart jFreeChart = CreateJfreeBarChart.iCreateBarChart();
         CreateJfreeBarChart.iSetBarChart(jFreeChart);
@@ -243,7 +262,7 @@ public class PDFTest {
         FileOutputStream fos_jpg2 = null;
         try {
             fos_jpg2 = new FileOutputStream(FILE_URL + "企业专利申请量.jpg");
-            ChartUtils.writeChartAsJPEG(fos_jpg2, 0.7f, jFreeChart, 800, 600, null);
+            ChartUtils.writeChartAsJPEG(fos_jpg2, 1f, jFreeChart, 800, 600, null);
             fos_jpg2.close();
             document.newPage();
             Paragraph barParagraph = new Paragraph("六、企业专利申请量top10", fontChinese_content);
