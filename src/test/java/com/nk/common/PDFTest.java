@@ -12,6 +12,7 @@ import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.chart.labels.StandardPieToolTipGenerator;
 import org.jfree.chart.plot.CategoryPlot;
@@ -76,6 +77,7 @@ public class PDFTest {
      */
     private static void lineDataset(Document document, Font fontChinese_content) {
         DefaultCategoryDataset lineDataset1 = new DefaultCategoryDataset();
+
         //申请量
         lineDataset1.addValue(3000, "申请量", "2016");
         lineDataset1.addValue(3980, "申请量", "2017");
@@ -86,12 +88,12 @@ public class PDFTest {
 
         DefaultCategoryDataset lineDataset2 = new DefaultCategoryDataset();
         //申请成功量
-        lineDataset2.addValue(2015, "申请成功量", "2016");
-        lineDataset2.addValue(3100, "申请成功量", "2017");
-        lineDataset2.addValue(2030, "申请成功量", "2018");
-        lineDataset2.addValue(2600, "申请成功量", "2019");
-        lineDataset2.addValue(4100, "申请成功量", "2020");
-        lineDataset2.addValue(4160, "申请成功量", "2021");
+        lineDataset1.addValue(2015, "申请成功量", "2016");
+        lineDataset1.addValue(3100, "申请成功量", "2017");
+        lineDataset1.addValue(2030, "申请成功量", "2018");
+        lineDataset1.addValue(2600, "申请成功量", "2019");
+        lineDataset1.addValue(4100, "申请成功量", "2020");
+        lineDataset1.addValue(4160, "申请成功量", "2021");
 
         DefaultCategoryDataset lineDataset3 = new DefaultCategoryDataset();
         //申请企业数
@@ -137,6 +139,14 @@ public class PDFTest {
         LineAndShapeRenderer lasp = (LineAndShapeRenderer) plot.getRenderer();
         // 设置拐点可见
         lasp.setDefaultShapesVisible(true);
+        // 设置拐点不同用不同的形状
+//        lasp.setDrawOutlines(true);
+        // 设置拐点的大小
+        lasp.setSeriesOutlineStroke(0, new BasicStroke(1.5F));
+        // 设置拐点形状(圆形拐点)
+        lasp.setSeriesShape(0, new java.awt.geom.Ellipse2D.Double(-5D, -5D, 10D, 10D));
+        lasp.setSeriesShape(1, new java.awt.geom.Ellipse2D.Double(-5D, -5D, 10D, 10D));
+        lasp.setSeriesShape(2, new java.awt.geom.Ellipse2D.Double(-5D, -5D, 10D, 10D));
         // fixme 设置折线与拐点颜色
         lasp.setSeriesPaint(0, new Color(2, 167, 240));
         lasp.setSeriesPaint(1, new Color(245, 154, 35));
@@ -145,10 +155,14 @@ public class PDFTest {
         //获取title
 //        lineChart.getTitle().setFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 16));
 
+        // 设置顶端显示数字
+        lasp.setDefaultItemLabelsVisible(true);
+        lasp.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
 
         //获取绘图区对象
         CategoryPlot linePlot = lineChart.getCategoryPlot();
-        linePlot.setBackgroundAlpha(0.1f);
+        // 背景纯白
+        linePlot.setBackgroundAlpha(0f);
 
         //获取坐标轴对象
         CategoryAxis lineAxis = linePlot.getDomainAxis();
