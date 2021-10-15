@@ -58,11 +58,11 @@ public class PDFTest {
 //            img.scaleAbsolute(328, 370);
 //            document.add(img);
             //生成饼状统计图
-//            pieDataSet(document, fontChinese_content);
+            pieDataSet(document, fontChinese_content);
             //柱状图
 //            barDataset(document, fontChinese_content);
             //折线图
-            lineDataset(document, fontChinese_content);
+//            lineDataset(document, fontChinese_content);
 
             System.out.println("over");
             document.close();
@@ -98,8 +98,8 @@ public class PDFTest {
 
         DefaultCategoryDataset lineDataset3 = new DefaultCategoryDataset();
         //申请企业数
-        lineDataset3.addValue(12, "0", "2016");// 虚拟数据,用来把下面的真实数据挤到series3
-        lineDataset3.addValue(12, "1", "2016");// 虚拟数据,用来把下面的真实数据挤到series3
+        lineDataset3.addValue(12, "0", "2016");// 虚拟数据,用来把下面的真实数据挤到series 2
+        lineDataset3.addValue(12, "1", "2016");// 虚拟数据,用来把下面的真实数据挤到series 2
         lineDataset3.addValue(12, "申请企业数", "2016");
         lineDataset3.addValue(20, "申请企业数", "2017");
         lineDataset3.addValue(13, "申请企业数", "2018");
@@ -204,41 +204,49 @@ public class PDFTest {
      */
     private static void pieDataSet(Document document, Font fontChinese_content) {
         DefaultPieDataset dataset = new DefaultPieDataset();
-        dataset.setValue(" 高新企业", new Double(83));
-        dataset.setValue(" 非高新企业", new Double(17));
+        dataset.setValue("高新企业", new Double(83));
+        dataset.setValue("非高新企业", new Double(17));
         JFreeChart chart = ChartFactory.createPieChart(
                 "园区报告", // chart title
                 dataset,// data
-                true,// include legend
-                true,
+                false,// include legend
+                false,
                 false
         );
         PiePlot plot = (PiePlot) chart.getPlot();
         //设置扇区颜色
-        plot.setSectionPaint(" 非高新企业", new Color(222, 235, 247));
-        plot.setSectionPaint(" 高新企业", new Color(91, 155, 213));
+        plot.setSectionPaint("非高新企业", new Color(222, 235, 247));
+        plot.setSectionPaint("高新企业", new Color(91, 155, 213));
+        // "取出" 非高新企业扇区
+        plot.setExplodePercent("非高新企业", 0.1);
         // 设置扇区的线条颜色
         plot.setDefaultSectionOutlinePaint(new Color(255, 255, 255));
         // 设置扇区的线条大小
-        plot.setDefaultSectionOutlineStroke(new BasicStroke(2));
+        plot.setDefaultSectionOutlineStroke(new BasicStroke(5));
+        // 完全关闭/开启片区外廓
+        plot.setSectionOutlinesVisible(false);
+        // 片区起始角度
+        plot.setStartAngle(90);
         //设置Label字体
         plot.setLabelFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 12));
         //设置legend字体
-        chart.getLegend().setItemFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 12));
+//        chart.getLegend().setItemFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 12));
         // 图片中显示百分比:默认方式
         plot.setLabelGenerator(new StandardPieSectionLabelGenerator(StandardPieToolTipGenerator.DEFAULT_TOOLTIP_FORMAT));
         // 图片中显示百分比:自定义方式，{0} 表示选项， {1} 表示数值， {2} 表示所占比例 ,小数点后两位
-        plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0}={1}({2})", NumberFormat.getNumberInstance(), new DecimalFormat("0.00%")));
+        plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0} {2}", NumberFormat.getNumberInstance(), new DecimalFormat("0.00%")));
         // 图例显示百分比:自定义方式， {0} 表示选项， {1} 表示数值， {2} 表示所占比例
-        plot.setLegendLabelGenerator(new StandardPieSectionLabelGenerator("{0}={1}({2})"));
+//        plot.setLegendLabelGenerator(new StandardPieSectionLabelGenerator("{0}={1}({2})"));
         // 设置背景色为白色
         chart.setBackgroundPaint(Color.white);
         // 指定图片的透明度(0.0-1.0)
         plot.setForegroundAlpha(1.0f);
+        // 背景纯白
+        plot.setBackgroundAlpha(0f);
         // 指定显示的饼图上圆形(false)还是椭圆形(true)
         plot.setCircular(true);
         // 设置图标题的字体
-        java.awt.Font font = new java.awt.Font(" 黑体", java.awt.Font.CENTER_BASELINE, 20);
+        java.awt.Font font = new java.awt.Font("黑体", java.awt.Font.CENTER_BASELINE, 20);
         TextTitle title = new TextTitle("饼状图");
         title.setFont(font);
         chart.setTitle(title);
