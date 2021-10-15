@@ -253,7 +253,7 @@ public class PDFTest {
         FileOutputStream fos_jpg = null;
         try {
             fos_jpg = new FileOutputStream(FILE_URL + "饼状图.jpg");
-            ChartUtils.writeChartAsJPEG(fos_jpg, 1f, chart, 800, 1000, null);
+            ChartUtils.writeChartAsJPEG(fos_jpg, 1f, chart, 800, 800, null);
             fos_jpg.close();
 
 
