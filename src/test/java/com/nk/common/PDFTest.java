@@ -20,6 +20,7 @@ import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.title.TextTitle;
+import org.jfree.data.Range;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
@@ -97,6 +98,8 @@ public class PDFTest {
 
         DefaultCategoryDataset lineDataset3 = new DefaultCategoryDataset();
         //申请企业数
+        lineDataset3.addValue(12, "0", "2016");// 虚拟数据,用来把下面的真实数据挤到series3
+        lineDataset3.addValue(12, "1", "2016");// 虚拟数据,用来把下面的真实数据挤到series3
         lineDataset3.addValue(12, "申请企业数", "2016");
         lineDataset3.addValue(20, "申请企业数", "2017");
         lineDataset3.addValue(13, "申请企业数", "2018");
@@ -128,6 +131,8 @@ public class PDFTest {
         plot.mapDatasetToRangeAxis(0, 0);
 //        if (lineDataset1.getColumnCount() > 0 && lineDataset3.getColumnCount() > 0) {
         NumberAxis numberAxis2 = new NumberAxis();
+        // 手动指定右侧刻度区间
+        numberAxis2.setRange(new Range(0, 60));
         // 右侧刻度跨度为 10 单位
         numberAxis2.setTickUnit(new NumberTickUnit(10));
         // 设置Y轴右侧刻度
@@ -137,6 +142,8 @@ public class PDFTest {
 //        }
         // 设置样式
         LineAndShapeRenderer lasp = (LineAndShapeRenderer) plot.getRenderer();
+        // 设置偏移量(同值是否重叠)
+        lasp.setUseSeriesOffset(false);
         // 设置拐点可见
         lasp.setDefaultShapesVisible(true);
         // 设置拐点不同用不同的形状
@@ -147,7 +154,7 @@ public class PDFTest {
         lasp.setSeriesShape(0, new java.awt.geom.Ellipse2D.Double(-5D, -5D, 10D, 10D));
         lasp.setSeriesShape(1, new java.awt.geom.Ellipse2D.Double(-5D, -5D, 10D, 10D));
         lasp.setSeriesShape(2, new java.awt.geom.Ellipse2D.Double(-5D, -5D, 10D, 10D));
-        // fixme 设置折线与拐点颜色
+        // 设置折线与拐点颜色
         lasp.setSeriesPaint(0, new Color(2, 167, 240));
         lasp.setSeriesPaint(1, new Color(245, 154, 35));
         lasp.setSeriesPaint(2, new Color(127, 127, 127));
