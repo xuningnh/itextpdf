@@ -41,10 +41,11 @@ public class CreateJfreeBarChart {
      */
     public static JFreeChart iCreateBarChart() {
         // TODO Auto-generated method stub
-        //        iSetBarChart(chart);
 //        WriteChartAsImage.writeChartAsImage(chart, getSaveImgUrlAndName(), getWidth(), getHeight());
 //        return ChartFactory.createBarChart(getChartTitle(), getDomainAxisLabel(), getRangeAxisLabel(), getDataset(), PlotOrientation.VERTICAL, true, false, false);
-        return ChartFactory.createBarChart(getChartTitle(), null, null, getDataset(), PlotOrientation.HORIZONTAL, false, false, false);
+        JFreeChart chart = ChartFactory.createBarChart(getChartTitle(), null, null, getDataset(), PlotOrientation.HORIZONTAL, false, false, false);
+        iSetBarChart(chart);
+        return chart;
     }
 
     /**
@@ -52,7 +53,7 @@ public class CreateJfreeBarChart {
      *
      * @param chart
      */
-    public static CategoryPlot iSetBarChart(JFreeChart chart) {
+    public static void iSetBarChart(JFreeChart chart) {
         CategoryPlot categoryplot = chart.getCategoryPlot();// 图本身
 //        ValueAxis rangeAxis = categoryplot.getRangeAxis();
         // 设置Y轴的提示文字样式
@@ -70,7 +71,7 @@ public class CreateJfreeBarChart {
         // 设置Y轴的数字为百分比样式显示
 //        DecimalFormat df = new DecimalFormat("0.0%");
         NumberAxis vn = (NumberAxis) categoryplot.getRangeAxis();
-        // 隐藏Y轴数字
+        // 显示Y轴数字
         vn.setVisible(false);
 //        vn.setNumberFormatOverride(df);
         // 使柱状图反过来显示
@@ -125,7 +126,6 @@ public class CreateJfreeBarChart {
 
         categoryplot.setRenderer(barRenderer);
 
-        return categoryplot;
     }
 
     /**

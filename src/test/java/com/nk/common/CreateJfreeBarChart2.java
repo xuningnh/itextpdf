@@ -4,6 +4,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.labels.ItemLabelAnchor;
 import org.jfree.chart.labels.ItemLabelPosition;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
@@ -19,7 +20,7 @@ import java.awt.*;
 
 public class CreateJfreeBarChart2 {
     // 设置柱状图上方的标题
-    private static String chartTitle = "环境污染指数分布图";
+    private static String chartTitle = "";
 
     // 设置Y轴的标注
     private static String rangeAxisLabel = "污染指数";
@@ -41,10 +42,11 @@ public class CreateJfreeBarChart2 {
      */
     public static JFreeChart iCreateBarChart() {
         // TODO Auto-generated method stub
-        //        iSetBarChart(chart);
 //        WriteChartAsImage.writeChartAsImage(chart, getSaveImgUrlAndName(), getWidth(), getHeight());
 //        return ChartFactory.createBarChart(getChartTitle(), getDomainAxisLabel(), getRangeAxisLabel(), getDataset(), PlotOrientation.VERTICAL, true, false, false);
-        return ChartFactory.createBarChart(getChartTitle(), null, null, getDataset(), PlotOrientation.HORIZONTAL, false, false, false);
+        JFreeChart chart = ChartFactory.createBarChart(getChartTitle(), null, null, getDataset(), PlotOrientation.VERTICAL, false, false, false);
+        iSetBarChart(chart);
+        return chart;
     }
 
     /**
@@ -52,14 +54,14 @@ public class CreateJfreeBarChart2 {
      *
      * @param chart
      */
-    public static CategoryPlot iSetBarChart(JFreeChart chart) {
+    public static void iSetBarChart(JFreeChart chart) {
         CategoryPlot categoryplot = chart.getCategoryPlot();// 图本身
-//        ValueAxis rangeAxis = categoryplot.getRangeAxis();
+        ValueAxis rangeAxis = categoryplot.getRangeAxis();
         // 设置Y轴的提示文字样式
-//        rangeAxis.setLabelFont(new Font("微软雅黑", Font.PLAIN, 12));
+        rangeAxis.setLabelFont(new Font("微软雅黑", Font.PLAIN, 12));
         // 设置Y轴刻度线的长度
-//        rangeAxis.setTickMarkInsideLength(10f);
-//        rangeAxis.setTickMarkOutsideLength(10f);
+        rangeAxis.setTickMarkInsideLength(10f);
+        rangeAxis.setTickMarkOutsideLength(10f);
 
         CategoryAxis domainAxis = categoryplot.getDomainAxis();
         // 设置X轴下的标签文字
@@ -70,8 +72,8 @@ public class CreateJfreeBarChart2 {
         // 设置Y轴的数字为百分比样式显示
 //        DecimalFormat df = new DecimalFormat("0.0%");
         NumberAxis vn = (NumberAxis) categoryplot.getRangeAxis();
-        // 隐藏Y轴数字
-        vn.setVisible(false);
+        // 显示Y轴数字
+        vn.setVisible(true);
 //        vn.setNumberFormatOverride(df);
         // 使柱状图反过来显示
         // vn.setInverted(true);
@@ -80,16 +82,8 @@ public class CreateJfreeBarChart2 {
         // 自定义柱状图中柱子的样式
         BarRenderer barRenderer = (BarRenderer) categoryplot.getRenderer();
         // 给series Bar 指定配色
-        barRenderer.setSeriesPaint(0, Color.decode("#5b9bd5"));
-        barRenderer.setSeriesPaint(1, Color.decode("#5b9bd5"));
-        barRenderer.setSeriesPaint(2, Color.decode("#5b9bd5"));
-        barRenderer.setSeriesPaint(3, Color.decode("#5b9bd5"));
-        barRenderer.setSeriesPaint(4, Color.decode("#5b9bd5"));
-        barRenderer.setSeriesPaint(5, Color.decode("#5b9bd5"));
-        barRenderer.setSeriesPaint(6, Color.decode("#5b9bd5"));
-        barRenderer.setSeriesPaint(7, Color.decode("#5b9bd5"));
-        barRenderer.setSeriesPaint(8, Color.decode("#5b9bd5"));
-        barRenderer.setSeriesPaint(9, Color.decode("#5b9bd5"));
+        barRenderer.setSeriesPaint(0, new Color(91, 155, 213));
+        barRenderer.setSeriesPaint(1, new Color(237, 237, 237));
 
         // 设置柱状图的顶端显示数字
         barRenderer.setIncludeBaseInRange(true);
@@ -106,16 +100,16 @@ public class CreateJfreeBarChart2 {
         // 设置柱子为平面图不是立体的
         barRenderer.setBarPainter(new StandardBarPainter());
         // 设置柱状图之间的距离0.1代表10%；
-        barRenderer.setItemMargin(0.05);
+        barRenderer.setItemMargin(0);
         // 设置柱子宽度
-        barRenderer.setMaximumBarWidth(0.02);
+        barRenderer.setMaximumBarWidth(0.3);
         // 设置柱子的阴影，false代表没有阴影
         barRenderer.setShadowVisible(false);
 
         // 设置图的背景为白色
         categoryplot.setBackgroundPaint(Color.WHITE);
         // 设置背景虚线的颜色
-        categoryplot.setRangeGridlinePaint(Color.decode("#B6A2DE"));
+        categoryplot.setRangeGridlinePaint(Color.WHITE);
         // 去掉柱状图的背景边框，使边框不可见
         categoryplot.setOutlineVisible(false);
         // 设置标题的字体样式
@@ -125,11 +119,24 @@ public class CreateJfreeBarChart2 {
 
         categoryplot.setRenderer(barRenderer);
 
-        return categoryplot;
     }
 
     /**
-     * 数据集合
+     * 折线图
+     */
+    public static DefaultCategoryDataset lineDataset() {
+        DefaultCategoryDataset lineDataset1 = new DefaultCategoryDataset();
+        //申请量
+        lineDataset1.addValue(87.00d, "授权率", "商标");
+        lineDataset1.addValue(57.00d, "授权率", "专利外观");
+        lineDataset1.addValue(80.00d, "授权率", "实用新型");
+        lineDataset1.addValue(22.00d, "授权率", "专利发明");
+        lineDataset1.addValue(0.00d, "授权率", "PCT国际");
+        return lineDataset1;
+    }
+
+    /**
+     * 柱状图数据集合
      *
      * @return
      */
@@ -137,27 +144,25 @@ public class CreateJfreeBarChart2 {
 
         DefaultCategoryDataset result = new DefaultCategoryDataset();
 
-        String series1 = "泸州智通自动化设备有限公司";
-        String series2 = "四川长江工程起重机有限责任公司";
-        String series3 = "泸州市驰腾科技有限公司";
-        String series4 = "四川海搏液压机械有限公司";
-        String series5 = "泸州睿大智能变速器有限公司";
-        String series6 = "四川邦立重机有限公司";
-        String series7 = "泸州成邦机械工程有限公司";
-        String series8 = "泸州长江液压密封件有限公司";
-        String series9 = "泸州长江机械有限公司";
-        String series10 = "泸州邦立减速机有限公司";
-        String type1 = "公司";
-        result.addValue(88, type1, series1);
-        result.addValue(79, type1, series2);
-        result.addValue(54, type1, series3);
-        result.addValue(50, type1, series4);
-        result.addValue(44, type1, series5);
-        result.addValue(43, type1, series6);
-        result.addValue(42, type1, series7);
-        result.addValue(42, type1, series8);
-        result.addValue(40, type1, series9);
-        result.addValue(38, type1, series10);
+        String series1 = "商标";
+        String series2 = "专利外观";
+        String series3 = "实用新型";
+        String series4 = "专利发明";
+        String series5 = "PCT国际";
+        String type1 = "整体申请件数";
+        String type2 = "整体注册/授权件数";
+
+        result.addValue(8080, type1, series1);
+        result.addValue(782, type1, series2);
+        result.addValue(2436, type1, series3);
+        result.addValue(808, type1, series4);
+        result.addValue(16, type1, series5);
+
+        result.addValue(7052, type2, series1);
+        result.addValue(449, type2, series2);
+        result.addValue(1953, type2, series3);
+        result.addValue(181, type2, series4);
+        result.addValue(0, type2, series5);
         return result;
 
     }

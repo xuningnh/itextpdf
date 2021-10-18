@@ -16,6 +16,7 @@ import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.chart.labels.StandardPieToolTipGenerator;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
@@ -58,11 +59,13 @@ public class PDFTest {
 //            img.scaleAbsolute(328, 370);
 //            document.add(img);
             //生成饼状统计图
-            pieDataSet(document, fontChinese_content);
+//            pieDataSet(document, fontChinese_content);
             //柱状图
 //            barDataset(document, fontChinese_content);
             //折线图
 //            lineDataset(document, fontChinese_content);
+            //柱状-折线图
+            bar_lineDataset(document, fontChinese_content);
 
             System.out.println("over");
             document.close();
@@ -73,8 +76,6 @@ public class PDFTest {
 
     /**
      * 折线图
-     *
-     * @return
      */
     private static void lineDataset(Document document, Font fontChinese_content) {
         DefaultCategoryDataset lineDataset1 = new DefaultCategoryDataset();
@@ -164,7 +165,7 @@ public class PDFTest {
 
         // 设置顶端显示数字
         lasp.setDefaultItemLabelsVisible(true);
-        lasp.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+        lasp.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator(StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING, NumberFormat.getInstance(), new DecimalFormat("0.00%")));
 
         //获取绘图区对象
         CategoryPlot linePlot = lineChart.getCategoryPlot();
@@ -199,8 +200,6 @@ public class PDFTest {
 
     /**
      * 饼状图
-     *
-     * @return
      */
     private static void pieDataSet(Document document, Font fontChinese_content) {
         DefaultPieDataset dataset = new DefaultPieDataset();
@@ -234,7 +233,7 @@ public class PDFTest {
         // 图片中显示百分比:默认方式
         plot.setLabelGenerator(new StandardPieSectionLabelGenerator(StandardPieToolTipGenerator.DEFAULT_TOOLTIP_FORMAT));
         // 图片中显示百分比:自定义方式，{0} 表示选项， {1} 表示数值， {2} 表示所占比例 ,小数点后两位
-        plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{2}", NumberFormat.getNumberInstance(), new DecimalFormat("0.00%")));
+        plot.setLabelGenerator(new StandardPieSectionLabelGenerator(StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING, NumberFormat.getNumberInstance(), new DecimalFormat("0.00%")));
         // 图例显示百分比:自定义方式， {0} 表示选项， {1} 表示数值， {2} 表示所占比例
 //        plot.setLegendLabelGenerator(new StandardPieSectionLabelGenerator("{0}={1}({2})"));
         // 设置每块饼和数据之间的线
@@ -270,9 +269,8 @@ public class PDFTest {
 //        TextTitle title = new TextTitle("饼状图");
 //        title.setFont(font);
 //        chart.setTitle(title);
-        FileOutputStream fos_jpg = null;
         try {
-            fos_jpg = new FileOutputStream(FILE_URL + "饼状图.jpg");
+            FileOutputStream fos_jpg = new FileOutputStream(FILE_URL + "饼状图.jpg");
             ChartUtils.writeChartAsJPEG(fos_jpg, 1f, chart, 300, 300, null);
             fos_jpg.close();
 
@@ -292,22 +290,17 @@ public class PDFTest {
 
     /**
      * 柱状图
-     *
-     * @param document
-     * @param fontChinese_content
      */
     private static void barDataset(Document document, Font fontChinese_content) {
         JFreeChart jFreeChart = CreateJfreeBarChart.iCreateBarChart();
-        CreateJfreeBarChart.iSetBarChart(jFreeChart);
 
         // 设置图标题的字体
         java.awt.Font font2 = new java.awt.Font(" 黑体", java.awt.Font.CENTER_BASELINE, 20);
         TextTitle title2 = new TextTitle("柱状图");
         title2.setFont(font2);
         jFreeChart.setTitle(title2);
-        FileOutputStream fos_jpg2 = null;
         try {
-            fos_jpg2 = new FileOutputStream(FILE_URL + "企业专利申请量.jpg");
+            FileOutputStream fos_jpg2 = new FileOutputStream(FILE_URL + "企业专利申请量.jpg");
             ChartUtils.writeChartAsJPEG(fos_jpg2, 1f, jFreeChart, 800, 600, null);
             fos_jpg2.close();
             document.newPage();
@@ -315,6 +308,65 @@ public class PDFTest {
             barParagraph.setAlignment(Paragraph.ALIGN_LEFT);
             document.add(barParagraph);
             Image barImage = Image.getInstance(FILE_URL + "企业专利申请量.jpg");
+            barImage.setAlignment(Image.ALIGN_CENTER);
+            barImage.scaleAbsolute(800, 600);
+            document.add(barImage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 柱状-折线图
+     */
+    private static void bar_lineDataset(Document document, Font fontChinese_content) {
+        JFreeChart jFreeChart = CreateJfreeBarChart2.iCreateBarChart();
+
+        // 添加折线数据
+        CategoryPlot plot = jFreeChart.getCategoryPlot();
+        plot.setDataset(1, CreateJfreeBarChart2.lineDataset());
+        // 添加标签数字百分比显示
+        LineAndShapeRenderer lasp = new LineAndShapeRenderer();
+        // 设置折线的颜色
+        lasp.setSeriesPaint(0, new Color(127, 127, 127));
+        // 设置折点形状是否可见
+        lasp.setDefaultShapesVisible(true);
+        // 设置顶端显示数字
+        lasp.setDefaultItemLabelsVisible(true);
+        // 格式化
+        lasp.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator(StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING, NumberFormat.getInstance(), new DecimalFormat("0.00%")));
+        plot.setRenderer(1, lasp);
+        // 折线在柱面前面显示
+        plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
+        NumberAxis numberAxis1 = new NumberAxis();
+        // 左侧刻度跨度为 1000 单位
+        numberAxis1.setTickUnit(new NumberTickUnit(1000));
+        // 设置Y轴左侧刻度
+        plot.setRangeAxis(0, numberAxis1);
+        NumberAxis numberAxis2 = new NumberAxis();
+        // 手动指定右侧刻度区间
+        numberAxis2.setRange(new Range(0, 100));
+        // 右侧刻度跨度为 10 单位
+        numberAxis2.setTickUnit(new NumberTickUnit(10));
+        // 设置Y轴右侧刻度
+        plot.setRangeAxis(1, numberAxis2);
+        // 设置折线数据源应用Y轴右侧刻度
+        plot.mapDatasetToRangeAxis(1, 1);
+
+//        lasp.setBaseShapesVisible(true);
+//        lasp.setBaseItemLabelsVisible(true);
+//        lasp.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator(StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING,
+//                NumberFormat.getInstance()));
+//        lasp.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.OUTSIDE1, TextAnchor.BOTTOM_CENTER));// weizhi
+        try {
+            FileOutputStream fos_jpg2 = new FileOutputStream(FILE_URL + "商标、专利申请件数情况 -授权率.jpg");
+            ChartUtils.writeChartAsJPEG(fos_jpg2, 1f, jFreeChart, 1000, 400, null);
+            fos_jpg2.close();
+            document.newPage();
+            Paragraph barParagraph = new Paragraph("一、商标、专利申请件数情况 -授权率", fontChinese_content);
+            barParagraph.setAlignment(Paragraph.ALIGN_LEFT);
+            document.add(barParagraph);
+            Image barImage = Image.getInstance(FILE_URL + "商标、专利申请件数情况 -授权率.jpg");
             barImage.setAlignment(Image.ALIGN_CENTER);
             barImage.scaleAbsolute(800, 600);
             document.add(barImage);
