@@ -207,7 +207,7 @@ public class PDFTest {
         dataset.setValue("高新企业", new Double(83));
         dataset.setValue("非高新企业", new Double(17));
         JFreeChart chart = ChartFactory.createPieChart(
-                "园区报告", // chart title
+                "", // chart title
                 dataset,// data
                 false,// include legend
                 false,
@@ -218,7 +218,7 @@ public class PDFTest {
         plot.setSectionPaint("非高新企业", new Color(222, 235, 247));
         plot.setSectionPaint("高新企业", new Color(91, 155, 213));
         // "取出" 非高新企业扇区
-        plot.setExplodePercent("非高新企业", 0.1);
+        plot.setExplodePercent("非高新企业", 0.05);
         // 设置扇区的线条颜色
         plot.setDefaultSectionOutlinePaint(new Color(255, 255, 255));
         // 设置扇区的线条大小
@@ -234,26 +234,46 @@ public class PDFTest {
         // 图片中显示百分比:默认方式
         plot.setLabelGenerator(new StandardPieSectionLabelGenerator(StandardPieToolTipGenerator.DEFAULT_TOOLTIP_FORMAT));
         // 图片中显示百分比:自定义方式，{0} 表示选项， {1} 表示数值， {2} 表示所占比例 ,小数点后两位
-        plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0} {2}", NumberFormat.getNumberInstance(), new DecimalFormat("0.00%")));
+        plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{2}", NumberFormat.getNumberInstance(), new DecimalFormat("0.00%")));
         // 图例显示百分比:自定义方式， {0} 表示选项， {1} 表示数值， {2} 表示所占比例
 //        plot.setLegendLabelGenerator(new StandardPieSectionLabelGenerator("{0}={1}({2})"));
+        // 设置每块饼和数据之间的线
+//        plot.setLabelLinksVisible(false);
+        plot.setSectionOutlinesVisible(false);//是否显示分界线
+        // 设置简单标签
+        plot.setSimpleLabels(true);
+        // 设置分类标签与图的连接线边距
+        plot.setLabelLinkMargin(0.05D);
+        // 忽略无值的分类
+        plot.setIgnoreZeroValues(true);
+        // 设置饼与边框的距离
+        plot.setLabelGap(0.00D);
         // 设置背景色为白色
         chart.setBackgroundPaint(Color.white);
+        plot.setBackgroundPaint(Color.white);  //饼图背景色
+        plot.setOutlinePaint(Color.white);// 设置绘图面板外边的填充颜色
+        plot.setShadowPaint(Color.white);// 设置绘图面板阴影的填充颜色
         // 指定图片的透明度(0.0-1.0)
         plot.setForegroundAlpha(1.0f);
         // 背景纯白
-        plot.setBackgroundAlpha(0f);
+        plot.setBackgroundAlpha(1f);
         // 指定显示的饼图上圆形(false)还是椭圆形(true)
         plot.setCircular(true);
+        //下面设置的是:饼图里面的百分比去除标签边框,只显示百分比的数据 (4个都要设置,缺一不可)
+        plot.setLabelOutlinePaint(null);// (1)自定义标签产生器,设置绘图面板外边的填充颜色
+        plot.setLabelShadowPaint(null);//自定义标签产生器, 设置绘图面板阴影的填充颜色
+        plot.setLabelOutlineStroke(null);//(2) 自定义标签产生器,设置绘图面板外边的填充颜色
+        plot.setLabelBackgroundPaint(null);//自定义标签产生器,背景色
+        //上面设置的是:饼图里面的百分比去除标签边框,只显示百分比的数据
         // 设置图标题的字体
-        java.awt.Font font = new java.awt.Font("黑体", java.awt.Font.CENTER_BASELINE, 20);
-        TextTitle title = new TextTitle("饼状图");
-        title.setFont(font);
-        chart.setTitle(title);
+//        java.awt.Font font = new java.awt.Font("黑体", java.awt.Font.CENTER_BASELINE, 20);
+//        TextTitle title = new TextTitle("饼状图");
+//        title.setFont(font);
+//        chart.setTitle(title);
         FileOutputStream fos_jpg = null;
         try {
             fos_jpg = new FileOutputStream(FILE_URL + "饼状图.jpg");
-            ChartUtils.writeChartAsJPEG(fos_jpg, 1f, chart, 800, 800, null);
+            ChartUtils.writeChartAsJPEG(fos_jpg, 1f, chart, 300, 300, null);
             fos_jpg.close();
 
 
