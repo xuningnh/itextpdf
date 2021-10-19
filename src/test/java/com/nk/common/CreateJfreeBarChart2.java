@@ -17,6 +17,7 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 
 public class CreateJfreeBarChart2 {
     // 设置柱状图上方的标题
@@ -69,12 +70,12 @@ public class CreateJfreeBarChart2 {
         // 设置X轴上提示文字样式
         domainAxis.setTickLabelFont(new Font("微软雅黑", Font.PLAIN, 16));
 
-        // 设置Y轴的数字为百分比样式显示
-//        DecimalFormat df = new DecimalFormat("0.0%");
         NumberAxis vn = (NumberAxis) categoryplot.getRangeAxis();
         // 显示Y轴数字
         vn.setVisible(true);
-//        vn.setNumberFormatOverride(df);
+        // 设置Y轴的数字为百分比样式显示
+        DecimalFormat df = new DecimalFormat("0.0%");
+        vn.setNumberFormatOverride(df);
         // 使柱状图反过来显示
         // vn.setInverted(true);
         // vn.setVerticalTickLabels(true);
@@ -118,7 +119,7 @@ public class CreateJfreeBarChart2 {
         chart.getLegend().setItemFont(new Font("微软雅黑", Font.PLAIN, 12));
 
         categoryplot.setRenderer(barRenderer);
-
+//        categoryplot.setRangeAxisLocation(AxisLocation.TOP_OR_RIGHT);
     }
 
     /**
@@ -127,11 +128,11 @@ public class CreateJfreeBarChart2 {
     public static DefaultCategoryDataset lineDataset() {
         DefaultCategoryDataset lineDataset1 = new DefaultCategoryDataset();
         //申请量
-        lineDataset1.addValue(87.00d, "授权率", "商标");
-        lineDataset1.addValue(57.00d, "授权率", "专利外观");
-        lineDataset1.addValue(80.00d, "授权率", "实用新型");
-        lineDataset1.addValue(22.00d, "授权率", "专利发明");
-        lineDataset1.addValue(0.00d, "授权率", "PCT国际");
+        lineDataset1.addValue(0.87d, "授权率", "商标");
+        lineDataset1.addValue(0.57d, "授权率", "专利外观");
+        lineDataset1.addValue(0.80d, "授权率", "实用新型");
+        lineDataset1.addValue(0.22d, "授权率", "专利发明");
+        lineDataset1.addValue(0.0d, "授权率", "PCT国际");
         return lineDataset1;
     }
 

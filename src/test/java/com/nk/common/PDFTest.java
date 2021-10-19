@@ -16,7 +16,6 @@ import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.xy.StackedXYBarRenderer;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
-import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.Range;
 import org.jfree.data.category.CategoryDataset;
@@ -54,19 +53,19 @@ public class PDFTest {
             document.add(paragraph_title);
             document.add(paragraph_title_1);
             document.add(paragraph_content);
-//            document.newPage();
 //            Image img = Image.getInstance(FILE_URL+"N03S{0KBD3NLW8(M}G0{UMR.png");
 //            img.setAlignment(Image.ALIGN_CENTER);
 //            img.scaleAbsolute(328, 370);
 //            document.add(img);
-            //生成饼状统计图
-//            pieDataSet(document, fontChinese_content);
-            //柱状图
-//            barDataset(document, fontChinese_content);
-            //折线图
-//            lineDataset(document, fontChinese_content);
+            document.newPage();
             //柱状-折线图
-//            bar_lineDataset(document, fontChinese_content);
+            bar_lineDataset(document, fontChinese_content);
+            //生成饼状统计图
+            pieDataSet(document, fontChinese_content);
+            //柱状图
+            barDataset(document, fontChinese_content);
+            //折线图
+            lineDataset(document, fontChinese_content);
             //堆叠柱状图-折线图
             table_dataset2(document, fontChinese_content);
             System.out.println("over");
@@ -272,16 +271,16 @@ public class PDFTest {
 //        title.setFont(font);
 //        chart.setTitle(title);
         try {
-            FileOutputStream fos_jpg = new FileOutputStream(FILE_URL + "饼状图.jpg");
+            FileOutputStream fos_jpg = new FileOutputStream(FILE_URL + "高新企业占比.jpg");
             ChartUtils.writeChartAsJPEG(fos_jpg, 1f, chart, 300, 300, null);
             fos_jpg.close();
 
 
             document.newPage();
-            Paragraph pieParagraph = new Paragraph("02、饼状图测试", fontChinese_content);
+            Paragraph pieParagraph = new Paragraph("二、高新企业占比", fontChinese_content);
             pieParagraph.setAlignment(Paragraph.ALIGN_LEFT);
             document.add(pieParagraph);
-            Image pieImage = Image.getInstance(FILE_URL + "饼状图.jpg");
+            Image pieImage = Image.getInstance(FILE_URL + "高新企业占比.jpg");
             pieImage.setAlignment(Image.ALIGN_CENTER);
             pieImage.scaleAbsolute(328, 370);
             document.add(pieImage);
@@ -297,10 +296,10 @@ public class PDFTest {
         JFreeChart jFreeChart = CreateJfreeBarChart.iCreateBarChart();
 
         // 设置图标题的字体
-        java.awt.Font font2 = new java.awt.Font(" 黑体", java.awt.Font.CENTER_BASELINE, 20);
-        TextTitle title2 = new TextTitle("柱状图");
-        title2.setFont(font2);
-        jFreeChart.setTitle(title2);
+//        java.awt.Font font2 = new java.awt.Font(" 黑体", java.awt.Font.CENTER_BASELINE, 20);
+//        TextTitle title2 = new TextTitle("柱状图");
+//        title2.setFont(font2);
+//        jFreeChart.setTitle(title2);
         try {
             FileOutputStream fos_jpg2 = new FileOutputStream(FILE_URL + "企业专利申请量.jpg");
             ChartUtils.writeChartAsJPEG(fos_jpg2, 1f, jFreeChart, 800, 600, null);
@@ -323,9 +322,9 @@ public class PDFTest {
      */
     private static void bar_lineDataset(Document document, Font fontChinese_content) {
         JFreeChart jFreeChart = CreateJfreeBarChart2.iCreateBarChart();
-
         // 添加折线数据
         CategoryPlot plot = jFreeChart.getCategoryPlot();
+        DefaultCategoryDataset defaultCategoryDataset = CreateJfreeBarChart2.lineDataset();
         plot.setDataset(1, CreateJfreeBarChart2.lineDataset());
         // 添加标签数字百分比显示
         LineAndShapeRenderer lasp = new LineAndShapeRenderer();
@@ -347,9 +346,16 @@ public class PDFTest {
         plot.setRangeAxis(0, numberAxis1);
         NumberAxis numberAxis2 = new NumberAxis();
         // 手动指定右侧刻度区间
-        numberAxis2.setRange(new Range(0, 100));
+        numberAxis2.setRange(new Range(0, 1));
         // 右侧刻度跨度为 10 单位
-        numberAxis2.setTickUnit(new NumberTickUnit(10));
+        numberAxis2.setTickUnit(new NumberTickUnit(0.1));
+        // 设置Y轴的数字为百分比样式显示
+        DecimalFormat df = new DecimalFormat("#.##%");
+        numberAxis2.setNumberFormatOverride(df);
+        // 设置折点数字以百分比显示
+        lasp.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator("{2}", df));
+        // 设置折点形状是否可见
+        lasp.setDefaultShapesVisible(false);
         // 设置Y轴右侧刻度
         plot.setRangeAxis(1, numberAxis2);
         // 设置折线数据源应用Y轴右侧刻度
@@ -415,7 +421,7 @@ public class PDFTest {
         StackedBarRenderer renderer = new StackedBarRenderer();
         plot.setRenderer(0, renderer);
         renderer.setDefaultItemLabelsVisible(true);
-        DecimalFormat decimalformat1 = new DecimalFormat("##.####");
+        DecimalFormat decimalformat1 = new DecimalFormat("#.##");
         renderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator("{2}", decimalformat1));
 //        rederer.setDefaultItemLabelFont(fontChinese_content);
         renderer.setMaximumBarWidth(0.07);
