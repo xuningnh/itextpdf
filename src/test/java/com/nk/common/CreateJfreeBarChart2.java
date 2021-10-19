@@ -44,7 +44,7 @@ public class CreateJfreeBarChart2 {
         // TODO Auto-generated method stub
 //        WriteChartAsImage.writeChartAsImage(chart, getSaveImgUrlAndName(), getWidth(), getHeight());
 //        return ChartFactory.createBarChart(getChartTitle(), getDomainAxisLabel(), getRangeAxisLabel(), getDataset(), PlotOrientation.VERTICAL, true, false, false);
-        JFreeChart chart = ChartFactory.createBarChart(getChartTitle(), null, null, getDataset(), PlotOrientation.VERTICAL, false, false, false);
+        JFreeChart chart = ChartFactory.createBarChart(getChartTitle(), null, null, getDataset(), PlotOrientation.VERTICAL, true, false, false);
         iSetBarChart(chart);
         return chart;
     }
@@ -115,7 +115,7 @@ public class CreateJfreeBarChart2 {
         // 设置标题的字体样式
         chart.getTitle().setFont(new Font("微软雅黑", Font.PLAIN, 24));
         // 设置图表下方图例上的字体样式
-//        chart.getLegend().setItemFont(new Font("微软雅黑", Font.PLAIN, 12));
+        chart.getLegend().setItemFont(new Font("微软雅黑", Font.PLAIN, 12));
 
         categoryplot.setRenderer(barRenderer);
 

@@ -8,28 +8,29 @@ import com.itextpdf.text.pdf.PdfWriter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.NumberTickUnit;
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
-import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
-import org.jfree.chart.labels.StandardPieToolTipGenerator;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.DatasetRenderingOrder;
-import org.jfree.chart.plot.PiePlot;
-import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.axis.*;
+import org.jfree.chart.labels.*;
+import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
+import org.jfree.chart.renderer.category.StackedBarRenderer;
+import org.jfree.chart.renderer.category.StandardBarPainter;
+import org.jfree.chart.renderer.xy.StackedXYBarRenderer;
+import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.title.TextTitle;
+import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.Range;
+import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.time.TimeTableXYDataset;
+import org.jfree.data.time.Year;
 
 import java.awt.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 
 public class PDFTest {
     private static final String FILE_URL = "C:\\Users\\xn\\Pictures\\";
@@ -65,8 +66,9 @@ public class PDFTest {
             //折线图
 //            lineDataset(document, fontChinese_content);
             //柱状-折线图
-            bar_lineDataset(document, fontChinese_content);
-
+//            bar_lineDataset(document, fontChinese_content);
+            //堆叠柱状图-折线图
+            table_dataset2(document, fontChinese_content);
             System.out.println("over");
             document.close();
         } catch (DocumentException | IOException e) {
@@ -208,7 +210,7 @@ public class PDFTest {
         JFreeChart chart = ChartFactory.createPieChart(
                 "", // chart title
                 dataset,// data
-                false,// include legend
+                true,// include legend
                 false,
                 false
         );
@@ -229,7 +231,7 @@ public class PDFTest {
         //设置Label字体
         plot.setLabelFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 12));
         //设置legend字体
-//        chart.getLegend().setItemFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 12));
+        chart.getLegend().setItemFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 12));
         // 图片中显示百分比:默认方式
         plot.setLabelGenerator(new StandardPieSectionLabelGenerator(StandardPieToolTipGenerator.DEFAULT_TOOLTIP_FORMAT));
         // 图片中显示百分比:自定义方式，{0} 表示选项， {1} 表示数值， {2} 表示所占比例 ,小数点后两位
@@ -374,4 +376,289 @@ public class PDFTest {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 堆叠柱状图-折线图
+     */
+    private static void table_dataset2(Document document, Font fontChinese_content) {
+        CategoryDataset barDataset = createDataset3();
+        DefaultCategoryDataset lineDataset = lineDataset();
+        //参数： title,x轴说明，y轴说明，图例
+        JFreeChart chart = ChartFactory.createBarChart("", "", "", barDataset, PlotOrientation.VERTICAL,
+                true, false, true);
+        //设置legend字体
+        chart.getLegend().setItemFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 12));
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+        ValueAxis rangeAxis = plot.getRangeAxis();
+        // 设置Y轴的提示文字样式
+        rangeAxis.setLabelFont(new java.awt.Font("微软雅黑", java.awt.Font.PLAIN, 12));
+        // 设置Y轴刻度线的长度
+        rangeAxis.setTickMarkInsideLength(10f);
+        rangeAxis.setTickMarkOutsideLength(10f);
+        //将默认放到左边的数值放到右边
+        plot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_RIGHT);
+        // 设置刻度是否可见
+        rangeAxis.setVisible(false);
+
+        // X轴
+        CategoryAxis domainAxis = plot.getDomainAxis();
+        // 设置X轴下的标签文字
+        domainAxis.setLabelFont(new java.awt.Font("微软雅黑", java.awt.Font.PLAIN, 24));
+        // 设置X轴上提示文字样式
+        domainAxis.setTickLabelFont(new java.awt.Font("微软雅黑", java.awt.Font.PLAIN, 16));
+        // set right margin
+        domainAxis.setUpperMargin(0.1);
+        // set X axis Label lines
+        domainAxis.setMaximumCategoryLabelLines(2);
+        //NumberAxis na = (NumberAxis) plot.getRangeAxis();
+        // stack bar chart
+        StackedBarRenderer renderer = new StackedBarRenderer();
+        plot.setRenderer(0, renderer);
+        renderer.setDefaultItemLabelsVisible(true);
+        DecimalFormat decimalformat1 = new DecimalFormat("##.####");
+        renderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator("{2}", decimalformat1));
+//        rederer.setDefaultItemLabelFont(fontChinese_content);
+        renderer.setMaximumBarWidth(0.07);
+//        renderer.setMinimumBarLength(20);
+        // 设置柱子为平面图不是立体的
+        renderer.setBarPainter(new StandardBarPainter());
+        // 设置柱子的阴影，false代表没有阴影
+        renderer.setShadowVisible(false);
+        // 柱子颜色
+        renderer.setSeriesPaint(0, new Color(250, 205, 140));
+        renderer.setSeriesPaint(1, new Color(2, 167, 240));
+        renderer.setSeriesPaint(2, new Color(128, 128, 255));
+        renderer.setSeriesPaint(3, new Color(128, 255, 255));
+
+        // line chart
+        LineAndShapeRenderer lasp = new LineAndShapeRenderer();
+        plot.setRenderer(1, lasp);
+
+        lasp.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+        lasp.setDefaultPositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.INSIDE12, TextAnchor.BASELINE_LEFT));
+        lasp.setDefaultItemLabelsVisible(true);
+        lasp.setDefaultShapesVisible(true);
+        // 设置拐点形状(圆形拐点)
+        lasp.setSeriesShape(0, new java.awt.geom.Ellipse2D.Double(-5D, -5D, 10D, 10D));
+        // 设置折线与拐点颜色
+        lasp.setSeriesPaint(0, new Color(245, 154, 35));
+
+        // point style
+//        lineRenderer.setSeriesShape(0, new Rectangle(5, 5));
+
+        NumberAxis rightYAxis = new NumberAxis("");
+        rightYAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+        plot.setRangeAxis(1, rightYAxis);
+        plot.setDataset(1, lineDataset);
+        plot.mapDatasetToRangeAxis(1, 1);
+        // set render order
+        plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
+        // 背景纯白
+        plot.setBackgroundAlpha(0f);
+
+        try {
+            FileOutputStream fos_jpg2 = new FileOutputStream(FILE_URL + "专利年度申请趋势.jpg");
+            ChartUtils.writeChartAsJPEG(fos_jpg2, 1f, chart, 1000, 400, null);
+            fos_jpg2.close();
+            document.newPage();
+            Paragraph barParagraph = new Paragraph("四、专利年度申请趋势", fontChinese_content);
+            barParagraph.setAlignment(Paragraph.ALIGN_LEFT);
+            document.add(barParagraph);
+            Image barImage = Image.getInstance(FILE_URL + "专利年度申请趋势.jpg");
+            barImage.setAlignment(Image.ALIGN_CENTER);
+            barImage.scaleAbsolute(800, 600);
+            document.add(barImage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static CategoryDataset createDataset3() {
+
+        DefaultCategoryDataset result = new DefaultCategoryDataset();
+
+        String series1 = "2016";
+        String series2 = "2017";
+        String series3 = "2018";
+        String series4 = "2019";
+        String series5 = "2020";
+        String series6 = "2021";
+        String type1 = "外观";
+        String type2 = "实用新型";
+        String type3 = "发明";
+        String type4 = "PCT";
+
+        result.addValue(200, type1, series1);
+        result.addValue(250, type1, series2);
+        result.addValue(300, type1, series3);
+        result.addValue(310, type1, series4);
+        result.addValue(410, type1, series5);
+        result.addValue(320, type1, series6);
+
+        result.addValue(100, type2, series1);
+        result.addValue(110, type2, series2);
+        result.addValue(120, type2, series3);
+        result.addValue(130, type2, series4);
+        result.addValue(110, type2, series5);
+        result.addValue(120, type2, series6);
+
+        result.addValue(50, type3, series1);
+        result.addValue(60, type3, series2);
+        result.addValue(120, type3, series3);
+        result.addValue(140, type3, series4);
+        result.addValue(90, type3, series5);
+        result.addValue(80, type3, series6);
+
+        result.addValue(50, type4, series1);
+        result.addValue(11, type4, series2);
+        result.addValue(30, type4, series3);
+        result.addValue(20, type4, series4);
+        result.addValue(15, type4, series5);
+        result.addValue(12, type4, series6);
+
+        return result;
+
+    }
+
+    private static DefaultCategoryDataset lineDataset() {
+        DefaultCategoryDataset lineDataset1 = new DefaultCategoryDataset();
+        //申请企业数
+        lineDataset1.addValue(25d, "申请企业数", "2016");
+        lineDataset1.addValue(31d, "申请企业数", "2017");
+        lineDataset1.addValue(28d, "申请企业数", "2018");
+        lineDataset1.addValue(36d, "申请企业数", "2019");
+        lineDataset1.addValue(45d, "申请企业数", "2020");
+        lineDataset1.addValue(37d, "申请企业数", "2021");
+        return lineDataset1;
+    }
+
+    /**
+     * XY柱状图
+     */
+    private static void table_xy_dataset(Document document, Font fontChinese_content) {
+        TimeTableXYDataset dataset = new TimeTableXYDataset();
+
+        dataset.add(new Year(2016), 200, "外观");
+        dataset.add(new Year(2017), 250, "外观");
+        dataset.add(new Year(2018), 300, "外观");
+        dataset.add(new Year(2019), 310, "外观");
+        dataset.add(new Year(2020), 410, "外观");
+        dataset.add(new Year(2021), 320, "外观");
+
+        dataset.add(new Year(2016), 100, "实用新型");
+        dataset.add(new Year(2017), 110, "实用新型");
+        dataset.add(new Year(2018), 120, "实用新型");
+        dataset.add(new Year(2019), 130, "实用新型");
+        dataset.add(new Year(2020), 110, "实用新型");
+        dataset.add(new Year(2021), 120, "实用新型");
+
+        dataset.add(new Year(2016), 50, "发明");
+        dataset.add(new Year(2017), 60, "发明");
+        dataset.add(new Year(2018), 120, "发明");
+        dataset.add(new Year(2019), 140, "发明");
+        dataset.add(new Year(2020), 90, "发明");
+        dataset.add(new Year(2021), 80, "发明");
+
+        dataset.add(new Year(2016), 10, "PCT");
+        dataset.add(new Year(2017), 11, "PCT");
+        dataset.add(new Year(2018), 30, "PCT");
+        dataset.add(new Year(2019), 20, "PCT");
+        dataset.add(new Year(2020), 15, "PCT");
+        dataset.add(new Year(2021), 12, "PCT");
+
+        DateAxis domainAxis = new DateAxis();
+        domainAxis.setTickMarkPosition(DateTickMarkPosition.MIDDLE);
+        domainAxis.setLowerMargin(0.01);
+        domainAxis.setUpperMargin(0.01);
+        // 设置横坐标为间隔一年
+        domainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.YEAR, 1, new SimpleDateFormat("yyyy")));
+        // 横坐标年份是否竖立
+        domainAxis.setVerticalTickLabels(false);
+        NumberAxis rangeAxis = new NumberAxis("Count");
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        rangeAxis.setUpperMargin(0.10);  // leave some space for item labels
+        StackedXYBarRenderer renderer = new StackedXYBarRenderer(0.15);
+        renderer.setDrawBarOutline(false);
+        renderer.setDefaultItemLabelsVisible(true);
+        renderer.setDefaultItemLabelGenerator(new StandardXYItemLabelGenerator());
+        renderer.setDefaultPositiveItemLabelPosition(new ItemLabelPosition(
+                ItemLabelAnchor.OUTSIDE12, TextAnchor.CENTER));
+
+        // 设置柱子为平面图不是立体的
+        renderer.setBarPainter(new StandardXYBarPainter());
+        // 设置柱状图之间的距离0.1代表10%；
+        renderer.setMargin(0.7);
+        // 设置柱子的阴影，false代表没有阴影
+        renderer.setShadowVisible(false);
+
+        // 柱子颜色
+        renderer.setSeriesPaint(0, new Color(250, 205, 140));
+        renderer.setSeriesPaint(1, new Color(2, 167, 240));
+        renderer.setSeriesPaint(2, new Color(128, 128, 255));
+        renderer.setSeriesPaint(3, new Color(128, 255, 255));
+        XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, renderer);
+        //将默认放到左边的数值放到右边
+        plot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_RIGHT);
+        JFreeChart chart = new JFreeChart("", plot);
+//        JFreeChart chart = ChartFactory.createXYBarChart("", null, true, null, dataset);
+
+//        chart.removeLegend();
+//        chart.addSubtitle(new TextTitle("PGA Tour, 1983 to 2003"));
+//        TextTitle source = new TextTitle("http://www.golfdigest.com/majors/masters/index.ssf?/majors/masters/gw20040402albatross.html", new Font(bfChinese, 10, Font.NORMAL, BaseColor.BLACK););
+//        chart.addSubtitle(source);
+//        LegendTitle legend = new LegendTitle(plot);
+//        legend.setBackgroundPaint(Color.white);
+//        legend.setBorder(0,0,0,0);
+//        legend.setPosition(RectangleEdge.BOTTOM);
+//        chart.addSubtitle(legend);
+
+        // 添加折线数据
+//        CategoryPlot categoryPlot = chart.getCategoryPlot();
+
+//        // 添加标签数字百分比显示
+//        LineAndShapeRenderer lasp = new LineAndShapeRenderer();
+//        // 设置折线的颜色
+//        lasp.setSeriesPaint(0, new Color(127, 127, 127));
+//        // 设置折点形状是否可见
+//        lasp.setDefaultShapesVisible(true);
+//        // 设置顶端显示数字
+//        lasp.setDefaultItemLabelsVisible(true);
+//        // 格式化
+//        lasp.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator(StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING, NumberFormat.getInstance(), new DecimalFormat("0.00%")));
+//        categoryPlot.setRenderer(1, lasp);
+//        // 折线在柱面前面显示
+//        categoryPlot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
+//        NumberAxis numberAxis1 = new NumberAxis();
+//        // 左侧刻度跨度为 1000 单位
+//        numberAxis1.setTickUnit(new NumberTickUnit(1000));
+//        // 设置Y轴左侧刻度
+//        categoryPlot.setRangeAxis(0, numberAxis1);
+//        NumberAxis numberAxis2 = new NumberAxis();
+//        // 手动指定右侧刻度区间
+//        numberAxis2.setRange(new Range(0, 100));
+//        // 右侧刻度跨度为 10 单位
+//        numberAxis2.setTickUnit(new NumberTickUnit(10));
+//        // 设置Y轴右侧刻度
+//        categoryPlot.setRangeAxis(1, numberAxis2);
+//        // 设置折线数据源应用Y轴右侧刻度
+//        plot.mapDatasetToRangeAxis(1, 1);
+
+        try {
+            FileOutputStream fos_jpg2 = new FileOutputStream(FILE_URL + "专利年度申请趋势.jpg");
+            ChartUtils.writeChartAsJPEG(fos_jpg2, 1f, chart, 1000, 400, null);
+            fos_jpg2.close();
+            document.newPage();
+            Paragraph barParagraph = new Paragraph("四、专利年度申请趋势", fontChinese_content);
+            barParagraph.setAlignment(Paragraph.ALIGN_LEFT);
+            document.add(barParagraph);
+            Image barImage = Image.getInstance(FILE_URL + "专利年度申请趋势.jpg");
+            barImage.setAlignment(Image.ALIGN_CENTER);
+            barImage.scaleAbsolute(800, 600);
+            document.add(barImage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
