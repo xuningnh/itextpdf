@@ -42,32 +42,43 @@ public class PDFTest {
             document.open();
             //设置中文样式（不设置，中文将不会显示）
             BaseFont bfChinese = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
-            Font fontChinese_title = new Font(bfChinese, 20, Font.BOLD, BaseColor.BLACK);
+            Font fontChinese_title = new Font(bfChinese, 20, Font.BOLD, new BaseColor(1, 191, 191));
+            Font fontChinese_sub_title = new Font(bfChinese, 14, Font.BOLD, BaseColor.BLACK);
             Font fontChinese_content = new Font(bfChinese, 10, Font.NORMAL, BaseColor.BLACK);
-            Paragraph paragraph_title = new Paragraph("这是一个标题", fontChinese_title);
+            Paragraph paragraph_title = new Paragraph("知识产权分析报告", fontChinese_title);
             paragraph_title.setAlignment(Paragraph.ALIGN_CENTER);
-            Paragraph paragraph_title_1 = new Paragraph("01总概括", fontChinese_content);
+            Paragraph paragraph_title_1 = new Paragraph("一、商标、专利申请件数情况 -授权率", fontChinese_sub_title);
+            Paragraph paragraph_title_2 = new Paragraph("二、高新企业占比", fontChinese_sub_title);
+            Paragraph paragraph_title_3 = new Paragraph("三、商标年度申请趋势", fontChinese_sub_title);
+            Paragraph paragraph_title_4 = new Paragraph("四、专利年度申请趋势", fontChinese_sub_title);
+            Paragraph paragraph_title_5 = new Paragraph("五、企业商标申请量 top10", fontChinese_sub_title);
+            Paragraph paragraph_title_6 = new Paragraph("六、企业专利申请量 top10", fontChinese_sub_title);
             paragraph_title_1.setAlignment(Paragraph.ALIGN_JUSTIFIED);
             Paragraph paragraph_content = new Paragraph("本期发生告警数量一共" + alarmNum + "次", fontChinese_content);
             paragraph_content.setFirstLineIndent(20);
             document.add(paragraph_title);
-            document.add(paragraph_title_1);
-            document.add(paragraph_content);
-//            Image img = Image.getInstance(FILE_URL+"N03S{0KBD3NLW8(M}G0{UMR.png");
+            //            Image img = Image.getInstance(FILE_URL+"N03S{0KBD3NLW8(M}G0{UMR.png");
 //            img.setAlignment(Image.ALIGN_CENTER);
 //            img.scaleAbsolute(328, 370);
 //            document.add(img);
-            document.newPage();
+//            document.newPage();
             //柱状-折线图
+            document.add(paragraph_title_1);
+            document.add(paragraph_content);
             bar_lineDataset(document, fontChinese_content);
             //生成饼状统计图
+            document.add(paragraph_title_2);
             pieDataSet(document, fontChinese_content);
             //柱状图
+            document.add(paragraph_title_3);
             barDataset(document, fontChinese_content);
             //折线图
+            document.add(paragraph_title_4);
             lineDataset(document, fontChinese_content);
             //堆叠柱状图-折线图
+            document.add(paragraph_title_5);
             table_dataset2(document, fontChinese_content);
+            document.add(paragraph_title_6);
             System.out.println("over");
             document.close();
         } catch (DocumentException | IOException e) {
@@ -185,12 +196,12 @@ public class PDFTest {
 
         try {
             // 生成图片
-            FileOutputStream fos = new FileOutputStream(FILE_URL + "折线图.jpg");
+            FileOutputStream fos = new FileOutputStream(FILE_URL + "商标年度申请趋势.jpg");
             ChartUtils.writeChartAsJPEG(fos, 1f, lineChart, 800, 300);
-            Paragraph lineParagraph = new Paragraph("03、折线图测试", fontChinese_content);
-            lineParagraph.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(lineParagraph);
-            Image image = Image.getInstance(FILE_URL + "折线图.jpg");
+//            Paragraph lineParagraph = new Paragraph("三、商标年度申请趋势", fontChinese_content);
+//            lineParagraph.setAlignment(Paragraph.ALIGN_LEFT);
+//            document.add(lineParagraph);
+            Image image = Image.getInstance(FILE_URL + "商标年度申请趋势.jpg");
             image.setAlignment(Image.ALIGN_CENTER);
             image.scaleAbsolute(800, 300);
             document.add(image);
@@ -274,12 +285,10 @@ public class PDFTest {
             FileOutputStream fos_jpg = new FileOutputStream(FILE_URL + "高新企业占比.jpg");
             ChartUtils.writeChartAsJPEG(fos_jpg, 1f, chart, 300, 300, null);
             fos_jpg.close();
-
-
-            document.newPage();
-            Paragraph pieParagraph = new Paragraph("二、高新企业占比", fontChinese_content);
-            pieParagraph.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(pieParagraph);
+//            document.newPage();
+//            Paragraph pieParagraph = new Paragraph("二、高新企业占比", fontChinese_content);
+//            pieParagraph.setAlignment(Paragraph.ALIGN_LEFT);
+//            document.add(pieParagraph);
             Image pieImage = Image.getInstance(FILE_URL + "高新企业占比.jpg");
             pieImage.setAlignment(Image.ALIGN_CENTER);
             pieImage.scaleAbsolute(328, 370);
@@ -304,10 +313,10 @@ public class PDFTest {
             FileOutputStream fos_jpg2 = new FileOutputStream(FILE_URL + "企业专利申请量.jpg");
             ChartUtils.writeChartAsJPEG(fos_jpg2, 1f, jFreeChart, 800, 600, null);
             fos_jpg2.close();
-            document.newPage();
-            Paragraph barParagraph = new Paragraph("六、企业专利申请量top10", fontChinese_content);
-            barParagraph.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(barParagraph);
+//            document.newPage();
+//            Paragraph barParagraph = new Paragraph("六、企业专利申请量top10", fontChinese_content);
+//            barParagraph.setAlignment(Paragraph.ALIGN_LEFT);
+//            document.add(barParagraph);
             Image barImage = Image.getInstance(FILE_URL + "企业专利申请量.jpg");
             barImage.setAlignment(Image.ALIGN_CENTER);
             barImage.scaleAbsolute(800, 600);
@@ -324,7 +333,6 @@ public class PDFTest {
         JFreeChart jFreeChart = CreateJfreeBarChart2.iCreateBarChart();
         // 添加折线数据
         CategoryPlot plot = jFreeChart.getCategoryPlot();
-        DefaultCategoryDataset defaultCategoryDataset = CreateJfreeBarChart2.lineDataset();
         plot.setDataset(1, CreateJfreeBarChart2.lineDataset());
         // 添加标签数字百分比显示
         LineAndShapeRenderer lasp = new LineAndShapeRenderer();
@@ -370,13 +378,15 @@ public class PDFTest {
             FileOutputStream fos_jpg2 = new FileOutputStream(FILE_URL + "商标、专利申请件数情况 -授权率.jpg");
             ChartUtils.writeChartAsJPEG(fos_jpg2, 1f, jFreeChart, 1000, 400, null);
             fos_jpg2.close();
-            document.newPage();
-            Paragraph barParagraph = new Paragraph("一、商标、专利申请件数情况 -授权率", fontChinese_content);
-            barParagraph.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(barParagraph);
+//            document.newPage();
+//            Paragraph barParagraph = new Paragraph("一、商标、专利申请件数情况 -授权率", fontChinese_content);
+//            barParagraph.setAlignment(Paragraph.ALIGN_LEFT);
+//            document.add(barParagraph);
             Image barImage = Image.getInstance(FILE_URL + "商标、专利申请件数情况 -授权率.jpg");
+            float scalePercentage = (72 / 300f) * 100.0f;
+            barImage.scalePercent(0.5f);
             barImage.setAlignment(Image.ALIGN_CENTER);
-            barImage.scaleAbsolute(800, 600);
+            barImage.scaleAbsolute(500, 200);
             document.add(barImage);
         } catch (Exception e) {
             e.printStackTrace();
@@ -467,10 +477,10 @@ public class PDFTest {
             FileOutputStream fos_jpg2 = new FileOutputStream(FILE_URL + "专利年度申请趋势.jpg");
             ChartUtils.writeChartAsJPEG(fos_jpg2, 1f, chart, 1000, 400, null);
             fos_jpg2.close();
-            document.newPage();
-            Paragraph barParagraph = new Paragraph("四、专利年度申请趋势", fontChinese_content);
-            barParagraph.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(barParagraph);
+//            document.newPage();
+//            Paragraph barParagraph = new Paragraph("四、专利年度申请趋势", fontChinese_content);
+//            barParagraph.setAlignment(Paragraph.ALIGN_LEFT);
+//            document.add(barParagraph);
             Image barImage = Image.getInstance(FILE_URL + "专利年度申请趋势.jpg");
             barImage.setAlignment(Image.ALIGN_CENTER);
             barImage.scaleAbsolute(800, 600);
@@ -607,57 +617,15 @@ public class PDFTest {
         //将默认放到左边的数值放到右边
         plot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_RIGHT);
         JFreeChart chart = new JFreeChart("", plot);
-//        JFreeChart chart = ChartFactory.createXYBarChart("", null, true, null, dataset);
-
-//        chart.removeLegend();
-//        chart.addSubtitle(new TextTitle("PGA Tour, 1983 to 2003"));
-//        TextTitle source = new TextTitle("http://www.golfdigest.com/majors/masters/index.ssf?/majors/masters/gw20040402albatross.html", new Font(bfChinese, 10, Font.NORMAL, BaseColor.BLACK););
-//        chart.addSubtitle(source);
-//        LegendTitle legend = new LegendTitle(plot);
-//        legend.setBackgroundPaint(Color.white);
-//        legend.setBorder(0,0,0,0);
-//        legend.setPosition(RectangleEdge.BOTTOM);
-//        chart.addSubtitle(legend);
-
-        // 添加折线数据
-//        CategoryPlot categoryPlot = chart.getCategoryPlot();
-
-//        // 添加标签数字百分比显示
-//        LineAndShapeRenderer lasp = new LineAndShapeRenderer();
-//        // 设置折线的颜色
-//        lasp.setSeriesPaint(0, new Color(127, 127, 127));
-//        // 设置折点形状是否可见
-//        lasp.setDefaultShapesVisible(true);
-//        // 设置顶端显示数字
-//        lasp.setDefaultItemLabelsVisible(true);
-//        // 格式化
-//        lasp.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator(StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING, NumberFormat.getInstance(), new DecimalFormat("0.00%")));
-//        categoryPlot.setRenderer(1, lasp);
-//        // 折线在柱面前面显示
-//        categoryPlot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
-//        NumberAxis numberAxis1 = new NumberAxis();
-//        // 左侧刻度跨度为 1000 单位
-//        numberAxis1.setTickUnit(new NumberTickUnit(1000));
-//        // 设置Y轴左侧刻度
-//        categoryPlot.setRangeAxis(0, numberAxis1);
-//        NumberAxis numberAxis2 = new NumberAxis();
-//        // 手动指定右侧刻度区间
-//        numberAxis2.setRange(new Range(0, 100));
-//        // 右侧刻度跨度为 10 单位
-//        numberAxis2.setTickUnit(new NumberTickUnit(10));
-//        // 设置Y轴右侧刻度
-//        categoryPlot.setRangeAxis(1, numberAxis2);
-//        // 设置折线数据源应用Y轴右侧刻度
-//        plot.mapDatasetToRangeAxis(1, 1);
 
         try {
             FileOutputStream fos_jpg2 = new FileOutputStream(FILE_URL + "专利年度申请趋势.jpg");
             ChartUtils.writeChartAsJPEG(fos_jpg2, 1f, chart, 1000, 400, null);
             fos_jpg2.close();
-            document.newPage();
-            Paragraph barParagraph = new Paragraph("四、专利年度申请趋势", fontChinese_content);
-            barParagraph.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(barParagraph);
+//            document.newPage();
+//            Paragraph barParagraph = new Paragraph("四、专利年度申请趋势", fontChinese_content);
+//            barParagraph.setAlignment(Paragraph.ALIGN_LEFT);
+//            document.add(barParagraph);
             Image barImage = Image.getInstance(FILE_URL + "专利年度申请趋势.jpg");
             barImage.setAlignment(Image.ALIGN_CENTER);
             barImage.scaleAbsolute(800, 600);
