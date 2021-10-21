@@ -19,7 +19,7 @@ import java.awt.*;
 
 public class CreateJfreeBarChart {
     // 设置柱状图上方的标题
-    private static String chartTitle = "环境污染指数分布图";
+    private static String chartTitle = "";
 
     // 设置Y轴的标注
     private static String rangeAxisLabel = "污染指数";
@@ -116,7 +116,7 @@ public class CreateJfreeBarChart {
         // 设置图的背景为白色
         categoryplot.setBackgroundPaint(Color.WHITE);
         // 设置背景虚线的颜色
-        categoryplot.setRangeGridlinePaint(Color.decode("#B6A2DE"));
+        categoryplot.setRangeGridlinePaint(Color.white);
         // 去掉柱状图的背景边框，使边框不可见
         categoryplot.setOutlineVisible(false);
         // 设置标题的字体样式

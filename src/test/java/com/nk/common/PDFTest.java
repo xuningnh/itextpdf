@@ -54,9 +54,18 @@ public class PDFTest {
             Paragraph paragraph_title_5 = new Paragraph("五、企业商标申请量 top10", fontChinese_sub_title);
             Paragraph paragraph_title_6 = new Paragraph("六、企业专利申请量 top10", fontChinese_sub_title);
             paragraph_title_1.setAlignment(Paragraph.ALIGN_JUSTIFIED);
-            Paragraph paragraph_content = new Paragraph("本期发生告警数量一共" + alarmNum + "次", fontChinese_content);
-            paragraph_content.setFirstLineIndent(20);
+            Paragraph paragraph_content2 = new Paragraph("贵园区总计有136家企业，其中36家为非高新技术企业，100家为高新技术企业。", fontChinese_content);
+            Paragraph paragraph_content3 = new Paragraph("贵园区商标申请总数共计8521件，注册商标总数共计6521件。", fontChinese_content);
+            Paragraph paragraph_content4 = new Paragraph("贵园区专利申请总数共计831件，其中外观设计专利200件，实用新型专利300件，发明专利420件，PCT国际专利11件。", fontChinese_content);
+            Paragraph paragraph_content5 = new Paragraph("贵园区总计有450家企业申请商标，企业商标申请量前十的企业占比达40%，另有89家企业还没有申请过商标。", fontChinese_content);
+            Paragraph paragraph_content6 = new Paragraph("贵园区总计有123家企业申请专利，其中高新企业专利申请率为70%，非高新企业专利申请率为50%。", fontChinese_content);
+            paragraph_content2.setFirstLineIndent(20);
+            paragraph_content3.setFirstLineIndent(20);
+            paragraph_content4.setFirstLineIndent(20);
+            paragraph_content5.setFirstLineIndent(20);
+            paragraph_content6.setFirstLineIndent(20);
             document.add(paragraph_title);
+            document.add(new Paragraph(" "));
             //            Image img = Image.getInstance(FILE_URL+"N03S{0KBD3NLW8(M}G0{UMR.png");
 //            img.setAlignment(Image.ALIGN_CENTER);
 //            img.scaleAbsolute(328, 370);
@@ -64,21 +73,32 @@ public class PDFTest {
 //            document.newPage();
             //柱状-折线图
             document.add(paragraph_title_1);
-            document.add(paragraph_content);
             bar_lineDataset(document, fontChinese_content);
+
             //生成饼状统计图
             document.add(paragraph_title_2);
+            document.add(paragraph_content2);
             pieDataSet(document, fontChinese_content);
-            //柱状图
-            document.add(paragraph_title_3);
-            barDataset(document, fontChinese_content);
+
             //折线图
-            document.add(paragraph_title_4);
+            document.add(paragraph_title_3);
+            document.add(paragraph_content3);
             lineDataset(document, fontChinese_content);
+
+            document.newPage();
+
             //堆叠柱状图-折线图
-            document.add(paragraph_title_5);
+            document.add(paragraph_title_4);
+            document.add(paragraph_content4);
             table_dataset2(document, fontChinese_content);
+
+            //柱状图
+            document.add(paragraph_title_5);
+            document.add(paragraph_content5);
+            //todo 柱状图
             document.add(paragraph_title_6);
+            document.add(paragraph_content6);
+            barDataset(document, fontChinese_content);
             System.out.println("over");
             document.close();
         } catch (DocumentException | IOException e) {
@@ -87,7 +107,7 @@ public class PDFTest {
     }
 
     /**
-     * 折线图
+     * 商标年度申请趋势
      */
     private static void lineDataset(Document document, Font fontChinese_content) {
         DefaultCategoryDataset lineDataset1 = new DefaultCategoryDataset();
@@ -131,7 +151,8 @@ public class PDFTest {
                 false
         );
         CategoryPlot plot = lineChart.getCategoryPlot();
-
+        // 去掉柱状图的背景边框，使边框不可见
+        plot.setOutlineVisible(false);
         NumberAxis numberAxis1 = new NumberAxis();
         // 左侧刻度跨度为 1000 单位
         numberAxis1.setTickUnit(new NumberTickUnit(1000));
@@ -197,13 +218,14 @@ public class PDFTest {
         try {
             // 生成图片
             FileOutputStream fos = new FileOutputStream(FILE_URL + "商标年度申请趋势.jpg");
-            ChartUtils.writeChartAsJPEG(fos, 1f, lineChart, 800, 300);
+            ChartUtils.writeChartAsJPEG(fos, 1f, lineChart, 800, 400);
 //            Paragraph lineParagraph = new Paragraph("三、商标年度申请趋势", fontChinese_content);
 //            lineParagraph.setAlignment(Paragraph.ALIGN_LEFT);
 //            document.add(lineParagraph);
             Image image = Image.getInstance(FILE_URL + "商标年度申请趋势.jpg");
             image.setAlignment(Image.ALIGN_CENTER);
-            image.scaleAbsolute(800, 300);
+            image.scalePercent(0.5f);
+            image.scaleAbsolute(400, 200);
             document.add(image);
         } catch (Exception e) {
             e.printStackTrace();
@@ -211,7 +233,7 @@ public class PDFTest {
     }
 
     /**
-     * 饼状图
+     * 高新企业占比
      */
     private static void pieDataSet(Document document, Font fontChinese_content) {
         DefaultPieDataset dataset = new DefaultPieDataset();
@@ -290,8 +312,9 @@ public class PDFTest {
 //            pieParagraph.setAlignment(Paragraph.ALIGN_LEFT);
 //            document.add(pieParagraph);
             Image pieImage = Image.getInstance(FILE_URL + "高新企业占比.jpg");
+            pieImage.scalePercent(0.5f);
             pieImage.setAlignment(Image.ALIGN_CENTER);
-            pieImage.scaleAbsolute(328, 370);
+            pieImage.scaleAbsolute(150, 150);
             document.add(pieImage);
         } catch (Exception e) {
             e.printStackTrace();
@@ -299,7 +322,7 @@ public class PDFTest {
     }
 
     /**
-     * 柱状图
+     * 企业专利申请量
      */
     private static void barDataset(Document document, Font fontChinese_content) {
         JFreeChart jFreeChart = CreateJfreeBarChart.iCreateBarChart();
@@ -319,7 +342,8 @@ public class PDFTest {
 //            document.add(barParagraph);
             Image barImage = Image.getInstance(FILE_URL + "企业专利申请量.jpg");
             barImage.setAlignment(Image.ALIGN_CENTER);
-            barImage.scaleAbsolute(800, 600);
+            barImage.scalePercent(0.5f);
+            barImage.scaleAbsolute(400, 300);
             document.add(barImage);
         } catch (Exception e) {
             e.printStackTrace();
@@ -327,7 +351,7 @@ public class PDFTest {
     }
 
     /**
-     * 柱状-折线图
+     * 商标、专利申请件数情况 -授权率
      */
     private static void bar_lineDataset(Document document, Font fontChinese_content) {
         JFreeChart jFreeChart = CreateJfreeBarChart2.iCreateBarChart();
@@ -368,7 +392,8 @@ public class PDFTest {
         plot.setRangeAxis(1, numberAxis2);
         // 设置折线数据源应用Y轴右侧刻度
         plot.mapDatasetToRangeAxis(1, 1);
-
+        // 去掉柱状图的背景边框，使边框不可见
+        plot.setOutlineVisible(false);
 //        lasp.setBaseShapesVisible(true);
 //        lasp.setBaseItemLabelsVisible(true);
 //        lasp.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator(StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING,
@@ -394,7 +419,7 @@ public class PDFTest {
     }
 
     /**
-     * 堆叠柱状图-折线图
+     * 专利年度申请趋势
      */
     private static void table_dataset2(Document document, Font fontChinese_content) {
         CategoryDataset barDataset = createDataset3();
@@ -483,7 +508,8 @@ public class PDFTest {
 //            document.add(barParagraph);
             Image barImage = Image.getInstance(FILE_URL + "专利年度申请趋势.jpg");
             barImage.setAlignment(Image.ALIGN_CENTER);
-            barImage.scaleAbsolute(800, 600);
+            barImage.scalePercent(0.5f);
+            barImage.scaleAbsolute(500, 200);
             document.add(barImage);
         } catch (Exception e) {
             e.printStackTrace();
@@ -628,7 +654,8 @@ public class PDFTest {
 //            document.add(barParagraph);
             Image barImage = Image.getInstance(FILE_URL + "专利年度申请趋势.jpg");
             barImage.setAlignment(Image.ALIGN_CENTER);
-            barImage.scaleAbsolute(800, 600);
+            barImage.scalePercent(0.5f);
+            barImage.scaleAbsolute(500, 200);
             document.add(barImage);
         } catch (Exception e) {
             e.printStackTrace();
